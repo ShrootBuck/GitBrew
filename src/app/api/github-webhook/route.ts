@@ -40,7 +40,6 @@ webhooks.on("push", async ({ id, payload }) => {
   }
 
   const userId = account.userId;
-  const user = account.user;
 
   // Process all commits in the push
   for (const commit of payload.commits) {
