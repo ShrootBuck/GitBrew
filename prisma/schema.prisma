@@ -46,8 +46,11 @@ model Commit {
     id        String   @id @default(cuid())
     commitId  String   @unique // GitHub commit SHA
     createdAt DateTime @default(now())
+    date      DateTime @default(now()) // The date of the commit (without time)
     user      User     @relation(fields: [userId], references: [id])
     userId    String
+
+    @@index([userId, date]) // Index for efficient querying by user and date
 }
 
 model User {
@@ -59,6 +62,9 @@ model User {
     accounts        Account[]
     sessions        Session[]
     commits         Commit[]
+    currentStreak   Int       @default(0) // Current streak count
+    longestStreak   Int       @default(0) // Longest streak achieved
+    lastCommitDate  DateTime? // Last date the user committed
     lastCoffeeOrder DateTime? // Track when the last coffee was ordered
 }
 
