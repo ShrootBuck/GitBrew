@@ -47,14 +47,10 @@ export async function POST(request: Request) {
     };
   }
 
-  interface GithubPayload {
-    commits?: Commit[];
-  }
-
-  let payload: GithubPayload;
+  let payload: unknown;
   try {
     payload = JSON.parse(bodyText);
-  } catch (_) {
+  } catch {
     return NextResponse.json(
       { error: "Invalid JSON payload" },
       { status: 400 },
