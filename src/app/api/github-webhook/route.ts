@@ -62,12 +62,14 @@ export async function POST(request: Request) {
 
   if (
     eventType === "push" &&
-    payload.commits &&
-    Array.isArray(payload.commits)
+    typeof payload === "object" &&
+    payload !== null &&
+    "commits" in payload &&
+    Array.isArray((payload as { commits: unknown[] }).commits)
   ) {
     // For each commit, log the GitHub user (from commit.author) and commit id.
     // Note: GitHub's commit objects may differ based on context.
-    payload.commits.forEach((commit: Commit) => {
+    (payload as { commits: Commit[] }).commits.forEach((commit) => {
       // Assuming the commit object includes an 'author' with a 'username' property.
       // If not available, fallback to 'name'.
       const githubUser: string =
