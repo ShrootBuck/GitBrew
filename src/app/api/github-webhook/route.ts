@@ -1,85 +1,56 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NextResponse } from "next/server";
-import { createHmac, timingSafeEqual } from "crypto";
+import { Webhooks, createNodeMiddleware } from "@octokit/webhooks";
 import { env } from "../../../env";
-export async function POST(request: Request) {
-  // Retrieve signature from headers
-  const signature = request.headers.get("x-hub-signature-256");
-  if (!signature) {
-    return NextResponse.json(
-      { error: "No signature provided" },
-      { status: 401 },
-    );
-  }
 
-  // Retrieve webhook secret from env variables
-  const secret = env.GITHUB_WEBHOOK_SECRET;
-  if (!secret) {
-    return NextResponse.json(
-      { error: "Webhook secret not configured" },
-      { status: 500 },
-    );
-  }
+const webhooks = new Webhooks({
+  secret: env.GITHUB_WEBHOOK_SECRET,
+});
 
-  // Read the raw body as text
-  const bodyText = await request.text();
+export async function POST(req: Request) {
+  // Get the request body as text
+  const payload = await req.text();
 
-  // Compute the HMAC digest for verification
-  const hmac = createHmac("sha256", secret);
-  hmac.update(bodyText);
-  const computedSignature = `sha256=${hmac.digest("hex")}`;
+  // Get the signature from the headers
+  const signature = req.headers.get("x-hub-signature-256") ?? "";
 
-  // Use constant-time comparison to check the signature
-  const sigBuffer = Buffer.from(signature);
-  const computedBuffer = Buffer.from(computedSignature);
-  if (
-    sigBuffer.length !== computedBuffer.length ||
-    !timingSafeEqual(sigBuffer, computedBuffer)
-  ) {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-  }
+  // Get the event name and delivery ID from the headers
+  const event = req.headers.get("x-github-event") ?? "";
+  const id = req.headers.get("x-github-delivery") ?? "";
 
-  interface Commit {
-    id: string;
-    message: string;
-    author?: {
-      username?: string;
-      name?: string;
-    };
-  }
-
-  let payload: unknown;
   try {
-    payload = JSON.parse(bodyText);
-  } catch {
+    // Verify the signature and process the webhook
+    await webhooks.verifyAndReceive({
+      id,
+      name: event,
+      payload,
+      signature,
+    });
+
+    // Check if this is a push event (new commits)
+    if (event === "push") {
+      // Parse the payload to access commit information
+      const pushPayload = JSON.parse(payload);
+
+      // Check if there are commits in the payload
+      if (pushPayload.commits && pushPayload.commits.length > 0) {
+        const username = pushPayload.sender?.login;
+        const commitCount = pushPayload.commits.length;
+
+        console.log(
+          `Received ${commitCount} new commits from user: ${username}`,
+        );
+        // Process the commits as needed here
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error processing webhook:", error);
     return NextResponse.json(
-      { error: "Invalid JSON payload" },
+      { error: "Invalid webhook payload" },
       { status: 400 },
     );
   }
-
-  // Retrieve the GitHub event type header
-  const eventType = request.headers.get("x-github-event");
-
-  if (
-    eventType === "push" &&
-    typeof payload === "object" &&
-    payload !== null &&
-    "commits" in payload &&
-    Array.isArray((payload as { commits: unknown[] }).commits)
-  ) {
-    // For each commit, log the GitHub user (from commit.author) and commit id.
-    // Note: GitHub's commit objects may differ based on context.
-    (payload as { commits: Commit[] }).commits.forEach((commit) => {
-      // Assuming the commit object includes an 'author' with a 'username' property.
-      // If not available, fallback to 'name'.
-      const githubUser: string =
-        commit.author?.username ?? commit.author?.name ?? "Unknown GitHub User";
-
-      console.log(
-        `GitHub ID: ${githubUser} | Commit: ${commit.id} | Message: ${commit.message}`,
-      );
-    });
-  }
-
-  return NextResponse.json({ success: true });
 }
