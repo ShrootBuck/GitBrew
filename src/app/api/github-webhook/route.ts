@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-// gitbrew/src/app/api/github-webhook/route.ts
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NextResponse } from "next/server";
 import { Webhooks } from "@octokit/webhooks";
