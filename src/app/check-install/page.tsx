@@ -13,11 +13,11 @@ export default async function CheckInstallPage() {
     redirect("/api/auth/signin");
   }
 
-  const token = await getToken({
-    req: { headers: headers(), cookies: cookies() } as never,
-    secret: env.AUTH_SECRET,
-  });
-  const githubAccessToken = token?.access_token as string;
+  const githubAccessToken = session.accessToken;
+
+  if (!githubAccessToken) {
+    redirect("/api/auth/signin");
+  }
 
   // 🔍 1. Call GitHub API to see if user has your app installed
   const res = await fetch("https://api.github.com/user/installations", {
@@ -26,7 +26,7 @@ export default async function CheckInstallPage() {
       Accept: "application/vnd.github+json",
     },
   });
- 
+
   interface Installation {
     app_id: number;
     id: number;
