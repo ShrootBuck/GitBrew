@@ -37,7 +37,7 @@ export default async function CheckInstallPage() {
   }
 
   const data = (await res.json()) as InstallationsResponse;
-  const appId = parseInt(process.env.GITHUB_APP_ID!); // your app's numeric ID
+  const appId = parseInt(env.AUTH_GITHUB_ID); // your app's numeric ID
 
   const hasInstalled = data?.installations?.some(
     (install: Installation) => install.app_id === appId,
