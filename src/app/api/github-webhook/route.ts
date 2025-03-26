@@ -8,7 +8,7 @@ import { db } from "~/server/db";
 const webhooks = new Webhooks({
   secret: env.GITHUB_WEBHOOK_SECRET,
 });
-
+ 
 webhooks.on("push", async ({ id, payload }) => {
   console.log(`Received push event: ${id}`);
 
