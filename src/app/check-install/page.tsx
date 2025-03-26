@@ -4,6 +4,7 @@ import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
 import { getToken } from "next-auth/jwt";
 import { cookies, headers } from "next/headers";
+import { env } from "../../env";
 
 export default async function CheckInstallPage() {
   const session = await auth();
@@ -14,7 +15,7 @@ export default async function CheckInstallPage() {
 
   const token = await getToken({
     req: { headers: headers(), cookies: cookies() } as never,
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: env.AUTH_SECRET,
   });
   const githubAccessToken = token?.access_token as string;
 
@@ -38,12 +39,12 @@ export default async function CheckInstallPage() {
   const data = (await res.json()) as InstallationsResponse;
   const appId = parseInt(process.env.GITHUB_APP_ID!); // your app's numeric ID
 
-  const hasInstalled = data.installations.some(
+  const hasInstalled = data?.installations?.some(
     (install: Installation) => install.app_id === appId,
   );
 
   if (hasInstalled) {
-    redirect("/dashboard"); // or wherever
+    redirect("/"); // or wherever
   } else {
     // 👇 Send them to install page
     redirect("https://github.com/apps/gitbrew-code-watcher/installations/new");

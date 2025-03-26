@@ -7,18 +7,18 @@ import { db } from "~/server/db";
 
 const webhooks = new Webhooks({
   secret: env.GITHUB_WEBHOOK_SECRET,
-}); 
- 
+});
+
 webhooks.on("push", async ({ id, payload }) => {
   console.log(`Received push event: ${id}`);
- 
+
   // Get the GitHub user ID who pushed the commits
   const githubUserId = payload.sender?.id?.toString();
   if (!githubUserId) {
     console.error("No GitHub user ID found in payload");
     return;
   }
-  
+
   // Find the user account
   const account = await db.account.findUnique({
     where: {

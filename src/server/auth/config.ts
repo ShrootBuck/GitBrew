@@ -51,14 +51,14 @@ export const authConfig = {
         ...session.user,
         id: user.id,
       },
-      async signIn({ user, account, profile }) {
-        // Optional: filter GitHub orgs or accounts here
-        return true;
-      },
-      async redirect({ url, baseUrl }) {
-        // 👇 After login, redirect to our "check/install" route
-        return `${baseUrl}/check-install`;
-      },
     }),
+    async signIn({ user, account, profile }) {
+      // Optional: filter GitHub orgs or accounts here
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      // 👇 After login, redirect to our "check/install" route
+      return `${baseUrl}/check-install`;
+    },
   },
 } satisfies NextAuthConfig;
