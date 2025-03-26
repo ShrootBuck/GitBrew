@@ -1,7 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
-import { env } from "../../env";
 import { db } from "~/server/db";
 
 /**
@@ -17,7 +16,6 @@ declare module "next-auth" {
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
-    accessToken?: string; // Add this line to include access token in session
   }
 
   // interface User {
@@ -34,15 +32,12 @@ declare module "next-auth" {
 export const authConfig = {
   providers: [
     GitHub({
-      clientId: env.AUTH_GITHUB_ID,
-      clientSecret: env.AUTH_GITHUB_SECRET,
-
-      authorization: {
-        params: {
-          // Add required GitHub scopes
-          scope: "read:user user:email repo",
-        },
-      },
+      // authorization: {
+      //   params: {
+      //     // Add required GitHub scopes
+      //     scope: "read:user repo",
+      //   },
+      // },
     }),
     /**
      * ...add more providers here.
@@ -56,29 +51,12 @@ export const authConfig = {
   ],
   adapter: PrismaAdapter(db),
   callbacks: {
-    session: ({ session, user, token }) => ({
+    session: ({ session, user }) => ({
       ...session,
       user: {
         ...session.user,
         id: user.id,
       },
-
-      // Include access token in session
-      accessToken: token.access_token,
     }),
-    async signIn({ user, account, profile }) {
-      // Optional: filter GitHub orgs or accounts here
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      // 👇 After login, redirect to our "check/install" route
-      return `${baseUrl}/check-install`;
-    }, // Add JWT callback to persist access token
-    jwt: async ({ token, account }) => {
-      if (account) {
-        token.access_token = account.access_token;
-      }
-      return token;
-    },
   },
 } satisfies NextAuthConfig;
