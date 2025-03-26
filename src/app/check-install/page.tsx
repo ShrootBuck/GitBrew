@@ -2,8 +2,6 @@
 
 import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
-import { getToken } from "next-auth/jwt";
-import { cookies, headers } from "next/headers";
 import { env } from "../../env";
 
 export default async function CheckInstallPage() {
