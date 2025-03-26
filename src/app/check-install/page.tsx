@@ -26,7 +26,7 @@ export default async function CheckInstallPage() {
       Accept: "application/vnd.github+json",
     },
   });
-
+ 
   interface Installation {
     app_id: number;
     id: number;
