@@ -11,7 +11,7 @@ const webhooks = new Webhooks({
  
 webhooks.on("push", async ({ id, payload }) => {
   console.log(`Received push event: ${id}`);
-
+ 
   // Get the GitHub user ID who pushed the commits
   const githubUserId = payload.sender?.id?.toString();
   if (!githubUserId) {
