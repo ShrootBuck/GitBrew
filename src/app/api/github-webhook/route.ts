@@ -18,7 +18,7 @@ webhooks.on("push", async ({ id, payload }) => {
     console.error("No GitHub user ID found in payload");
     return;
   }
-
+ 
   // Find the user account
   const account = await db.account.findUnique({
     where: {
