@@ -31,7 +31,11 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    GitHub({}),
+    GitHub({
+      authorization: {
+        url: "https://github.com/apps/gitbrew-code-watcher/installations/new",
+      },
+    }),
     /**
      * ...add more providers here.
      *
