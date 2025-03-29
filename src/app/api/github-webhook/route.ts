@@ -77,6 +77,17 @@ webhooks.on("installation.created", async ({ id, payload }) => {
       user: true,
     },
   });
+
+  if (account?.user) {
+    // Set onboardingStatus to 1 when GitHub app is installed
+    await db.user.update({
+      where: { id: account.user.id },
+      data: {
+        onboardingStatus: 1,
+      },
+    });
+    console.log(`Updated onboardingStatus to 1 for user ${account.user.id}`);
+  }
 });
 
 async function updateUserStreak(userId: string, commitDate: Date) {
