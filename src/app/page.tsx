@@ -9,13 +9,13 @@ export default function HomePage() {
           Git<span className="text-[#6e5494]">Brew</span>
         </h1>
         <p className="max-w-2xl text-center text-xl">
-          Commit to GitHub consistently for two weeks straight, and we'll reward
-          you with a 12oz coffee of your choice. Build your streak, fuel your
-          code.
+          Commit to GitHub consistently for two weeks straight, and we&apos;ll
+          reward you with a 12oz coffee of your choice. Build your streak, fuel
+          your code.
         </p>
 
         <div className="my-6 flex flex-wrap justify-center gap-3">
-          {[...Array(14)].map((_, i) => (
+          {Array.from({ length: 14 }).map((_, i) => (
             <div
               key={i}
               className="flex h-10 w-10 items-center justify-center rounded-md border border-white/20 bg-white/10"
@@ -41,7 +41,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-2xl font-bold">Connect GitHub</h3>
             <div className="text-lg">
-              Link your GitHub account and we'll automatically track your
+              Link your GitHub account and we&apos;ll automatically track your
               commits across repositories.
             </div>
           </div>
@@ -52,8 +52,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-2xl font-bold">Build Your Streak</h3>
             <div className="text-lg">
-              Commit code for 14 consecutive days to qualify. We'll keep track
-              and notify you of your progress.
+              Commit code for 14 consecutive days to qualify. We&apos;ll keep
+              track and notify you of your progress.
             </div>
           </div>
 
@@ -63,8 +63,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-2xl font-bold">Earn Your Coffee</h3>
             <div className="text-lg">
-              Complete the challenge and we'll send a fresh 12oz coffee directly
-              to your doorstep.
+              Complete the challenge and we&apos;ll send a fresh 12oz coffee
+              directly to your doorstep.
             </div>
           </div>
         </div>
