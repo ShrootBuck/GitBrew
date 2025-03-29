@@ -31,14 +31,7 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    GitHub({
-      // authorization: {
-      //   params: {
-      //     // Add required GitHub scopes
-      //     scope: "read:user repo",
-      //   },
-      // },
-    }),
+    GitHub({}),
     /**
      * ...add more providers here.
      *
