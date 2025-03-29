@@ -1,11 +1,12 @@
 import { auth } from "~/server/auth";
-import Landing from "./onboarding/landing";
+import Landing from "./onboarding/0";
+import GithubApp from "./onboarding/1";
 
 export default async function HomePage() {
   const session = await auth();
 
   if (session) {
-    return <p>hello</p>;
+    return <GithubApp />;
   }
   return <Landing />;
 }
