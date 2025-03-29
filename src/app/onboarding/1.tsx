@@ -22,8 +22,6 @@ export default function GithubApp() {
           <a
             href="https://github.com/apps/gitbrew-code-watcher/installations/new"
             className="flex items-center gap-3 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
-            target="_blank"
-            rel="noopener noreferrer"
           >
             <FaGithub className="text-2xl" /> Add GitHub App
           </a>
