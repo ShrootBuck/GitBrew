@@ -71,6 +71,47 @@ webhooks.on("push", async ({ id, payload }) => {
   }
 });
 
+webhooks.on("installation.created", async ({ id, payload }) => {
+  console.log(`Received installation.created event: ${id}`);
+
+  // Get the GitHub user ID who created the installation
+  const githubUserId = payload.sender?.id?.toString();
+  if (!githubUserId) {
+    console.error("No GitHub user ID found in installation payload");
+    return;
+  }
+
+  console.log(`GitHub App installed by user ID: ${githubUserId}`);
+
+  // Find the user account
+
+  const account = await db.account.findUnique({
+    where: {
+      provider_providerAccountId: {
+        provider: "github",
+        providerAccountId: githubUserId,
+      },
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  if (account) {
+    // Update the user's onboardingStatus to 1
+    await db.user.update({
+      where: { id: account.userId },
+      data: {
+        onboardingStatus: 1,
+      },
+    });
+
+    console.log(`Updated onboardingStatus to 1 for user ID: ${account.userId}`);
+  } else {
+    console.log(`No matching account found for GitHub ID: ${githubUserId}`);
+  }
+});
+
 async function updateUserStreak(userId: string, commitDate: Date) {
   // Get user with their current streak info
   const user = await db.user.findUnique({
