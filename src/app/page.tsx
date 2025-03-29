@@ -10,7 +10,14 @@ export default async function HomePage() {
     // Get the user
     const user = await db.user.findUnique({ where: { id: session.user.id } });
 
-    return <GithubApp />;
+    switch (user.onboardingStatus) {
+      case 1:
+        return <p>Hi!</p>;
+      case "ACTIVE":
+        return <GithubApp />;
+      case "INACTIVE":
+        return <Landing />;
+    }
   }
   return <Landing />;
 }
