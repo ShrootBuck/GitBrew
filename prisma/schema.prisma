@@ -2,73 +2,74 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider  = "postgresql"
-    url       = env("DATABASE_URL")
-    directUrl = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // Necessary for Next auth
 model Account {
-    id                       String  @id @default(cuid())
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? // @db.Text
-    session_state            String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    refresh_token_expires_in Int?
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? // @db.Text
+  access_token             String? // @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? // @db.Text
+  session_state            String?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refresh_token_expires_in Int?
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Commit {
-    id        String   @id @default(cuid())
-    commitId  String   @unique // GitHub commit SHA
-    createdAt DateTime @default(now())
-    date      DateTime @default(now()) // The date of the commit (without time)
-    user      User     @relation(fields: [userId], references: [id])
-    userId    String
+  id        String   @id @default(cuid())
+  commitId  String   @unique // GitHub commit SHA
+  createdAt DateTime @default(now())
+  date      DateTime @default(now()) // The date of the commit (without time)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
 
-    @@index([userId, date]) // Index for efficient querying by user and date
+  @@index([userId, date]) // Index for efficient querying by user and date
 }
 
 model User {
-    id              String    @id @default(cuid())
-    name            String?
-    email           String?   @unique
-    emailVerified   DateTime?
-    image           String?
-    accounts        Account[]
-    sessions        Session[]
-    commits         Commit[]
-    currentStreak   Int       @default(0) // Current streak count
-    longestStreak   Int       @default(0) // Longest streak achieved
-    lastCommitDate  DateTime? // Last date the user committed
-    lastCoffeeOrder DateTime? // Track when the last coffee was ordered
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  accounts         Account[]
+  sessions         Session[]
+  commits          Commit[]
+  onboardingStatus Int       @default(0) // Onboarding status
+  currentStreak    Int       @default(0) // Current streak count
+  longestStreak    Int       @default(0) // Longest streak achieved
+  lastCommitDate   DateTime? // Last date the user committed
+  lastCoffeeOrder  DateTime? // Track when the last coffee was ordered
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
