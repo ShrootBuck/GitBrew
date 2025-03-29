@@ -1,4 +1,4 @@
-import { FaGithub, FaCoffee } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 
 export default function GithubApp() {
   return (
