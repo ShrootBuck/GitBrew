@@ -47,6 +47,7 @@ model User {
   image            String?
   accounts         Account[]
   sessions         Session[]
+  terminalToken    String?
   onboardingStatus Int       @default(0) // Onboarding status
   currentStreak    Int       @default(0) // Current streak count
   longestStreak    Int       @default(0) // Longest streak achieved
