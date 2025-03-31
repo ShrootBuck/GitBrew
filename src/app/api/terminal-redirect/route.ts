@@ -4,7 +4,6 @@ import { env } from "../../../env";
 import { db } from "~/server/db";
 import { auth } from "~/server/auth";
 import OAuth2Server from "@node-oauth/oauth2-server";
-import axios from "axios";
 
 // Define the structure of the token response from Terminal
 interface TerminalTokenResponse {
@@ -51,7 +50,7 @@ export async function GET(request: NextRequest) {
   ).toString();
 
   try {
-    // --- 2. Exchange code for token using axios directly (oauth2-server is mainly for the server side) ---
+    // --- 2. Exchange code for token using fetch instead of axios ---
     const tokenUrl = `${env.TERMINAL_API_URL}/token`;
     const params = new URLSearchParams();
     params.append("grant_type", "authorization_code");
@@ -60,13 +59,19 @@ export async function GET(request: NextRequest) {
     params.append("client_id", env.TERMINAL_CLIENT_ID);
     params.append("client_secret", env.TERMINAL_SECRET);
 
-    const response = await axios.post(tokenUrl, params, {
+    const response = await fetch(tokenUrl, {
+      method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
+      body: params,
     });
 
-    const tokenData = response.data as TerminalTokenResponse;
+    if (!response.ok) {
+      throw new Error(`Token request failed with status: ${response.status}`);
+    }
+
+    const tokenData = (await response.json()) as TerminalTokenResponse;
 
     const accessToken = tokenData.access_token;
     const refreshToken = tokenData.refresh_token;
