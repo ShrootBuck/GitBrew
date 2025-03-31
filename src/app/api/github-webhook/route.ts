@@ -37,20 +37,18 @@ webhooks.on("push", async ({ id, payload }) => {
 
   const userId = account.userId;
 
-  // Process only the first commit in the push to update the streak
-  if (payload.commits.length > 0) {
-    const commitDate = new Date(payload.commits[0]?.timestamp ?? "");
+  // Use the push date instead of the first commit date
+  const pushDate = new Date();
 
-    // Set to start of day to ensure we only compare dates not times
-    const commitDateOnly = new Date(
-      commitDate.getFullYear(),
-      commitDate.getMonth(),
-      commitDate.getDate(),
-    );
+  // Set to start of day to ensure we only compare dates not times
+  const pushDateOnly = new Date(
+    pushDate.getFullYear(),
+    pushDate.getMonth(),
+    pushDate.getDate(),
+  );
 
-    // Update user's streak directly without storing the commit
-    await updateUserStreak(userId, commitDateOnly);
-  }
+  // Update user's streak directly without storing the commit
+  await updateUserStreak(userId, pushDateOnly);
 });
 
 webhooks.on("installation.created", async ({ id, payload }) => {
