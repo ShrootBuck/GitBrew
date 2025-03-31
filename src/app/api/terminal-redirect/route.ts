@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { env } from "../../../env";
 import { db } from "~/server/db";
 import { auth } from "~/server/auth";
+import OAuth2Server from "@node-oauth/oauth2-server";
+import axios from "axios";
 
 // Define the structure of the token response from Terminal
 interface TerminalTokenResponse {
@@ -41,9 +43,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // --- 2. Exchange Code for Access Token ---
-  const tokenUrl = `${env.TERMINAL_API_URL}/token`;
-
   // The redirect URI *must* exactly match the one you sent in the initial auth request
   // AND the one registered in your Terminal App settings.
   const redirectUri = new URL(
@@ -52,45 +51,27 @@ export async function GET(request: NextRequest) {
   ).toString();
 
   try {
-    const response = await fetch(tokenUrl, {
-      method: "POST",
+    // --- 2. Exchange code for token using axios directly (oauth2-server is mainly for the server side) ---
+    const tokenUrl = `${env.TERMINAL_API_URL}/token`;
+    const params = new URLSearchParams();
+    params.append("grant_type", "authorization_code");
+    params.append("code", code);
+    params.append("redirect_uri", redirectUri);
+    params.append("client_id", env.TERMINAL_CLIENT_ID);
+    params.append("client_secret", env.TERMINAL_SECRET);
+
+    const response = await axios.post(tokenUrl, params, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        // Use Basic Authentication to send client_id and client_secret
-        Authorization: `Basic ${Buffer.from(`${env.TERMINAL_CLIENT_ID}:${env.TERMINAL_SECRET}`).toString("base64")}`,
       },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: redirectUri,
-      }),
     });
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(
-        `Failed to exchange Terminal code for token. Status: ${response.status}`,
-        errorBody,
-      );
-      throw new Error(`Terminal token exchange failed: ${response.status}`);
-    }
+    const tokenData = response.data as TerminalTokenResponse;
 
-    const tokenData: TerminalTokenResponse =
-      (await response.json()) as TerminalTokenResponse;
     const accessToken = tokenData.access_token;
-    const refreshToken = tokenData.refresh_token; // Store this too if you get one!
+    const refreshToken = tokenData.refresh_token;
 
-    // --- 3. Get Current User's ID (CRITICAL - Needs Your Implementation!) ---
-    // This depends entirely on how you manage GitHub sessions.
-    // Example using NextAuth.js:
-    // const session = await getServerSession(authOptions);
-    // if (!session?.user?.id) {
-    //   console.error("User not logged in during Terminal OAuth callback.");
-    //   throw new Error("User session not found.");
-    // }
-    // const userId = session.user.id;
-
-    // Replace this placeholder with your actual user ID retrieval logic:
+    // --- 3. Get Current User's ID ---
     const session = await auth();
     const userId = session?.user.id;
     if (!userId) {
@@ -115,8 +96,7 @@ export async function GET(request: NextRequest) {
               ),
             }
           : {}),
-        // Optionally update onboarding status if this is part of onboarding
-        // onboardingStatus: 2, // Uncomment if Terminal connection is a step in onboarding
+        onboardingStatus: 2,
       },
     });
 
@@ -132,26 +112,4 @@ export async function GET(request: NextRequest) {
     errorRedirectUrl.searchParams.set("terminal_error", "callback_failed");
     return NextResponse.redirect(errorRedirectUrl);
   }
-}
-
-// --- Placeholder - Replace with your actual user ID logic ---
-// This needs to interact with your existing GitHub authentication session
-async function getCurrentUserId(request: NextRequest): Promise<string | null> {
-  // Example if using NextAuth.js session cookie:
-  // const session = await getServerSession(authOptions); // You might need to pass req/res here depending on setup
-  // return session?.user?.id ?? null;
-
-  // Example if you have user ID stored in an encrypted session cookie:
-  // const sessionCookie = request.cookies.get('your-session-cookie-name');
-  // if (sessionCookie) {
-  //   const decryptedSession = await decrypt(sessionCookie.value); // Your decryption logic
-  //   return decryptedSession?.userId ?? null;
-  // }
-
-  console.warn(
-    "getCurrentUserId function is a placeholder - Implement your user session logic!",
-  );
-  // Return a dummy ID for testing ONLY IF ABSOLUTELY NECESSARY, remove for real use
-  // return "cl_dummy_user_id_replace_me";
-  return null; // Return null in reality until implemented
 }

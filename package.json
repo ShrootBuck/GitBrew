@@ -22,10 +22,12 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",
+    "@node-oauth/oauth2-server": "^5.2.0",
     "@octokit/webhooks": "^13.8.0",
     "@prisma/client": "^6.5.0",
     "@t3-oss/env-nextjs": "^0.12.0",
     "@terminaldotshop/sdk": "^1.6.2",
+    "axios": "^1.8.4",
     "motion": "^12.6.2",
     "next": "^15.2.4",
     "next-auth": "5.0.0-beta.25",
