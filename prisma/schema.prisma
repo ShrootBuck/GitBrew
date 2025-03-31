@@ -40,19 +40,22 @@ model Session {
 }
 
 model User {
-  id               String    @id @default(cuid())
-  name             String?
-  email            String?   @unique
-  emailVerified    DateTime?
-  image            String?
-  accounts         Account[]
-  sessions         Session[]
-  terminalToken    String?
-  onboardingStatus Int       @default(0) // Onboarding status
-  currentStreak    Int       @default(0) // Current streak count
-  longestStreak    Int       @default(0) // Longest streak achieved
-  lastCommitDate   DateTime? // Last date the user committed
-  lastCoffeeOrder  DateTime? // Track when the last coffee was ordered
+  id                   String    @id @default(cuid())
+  name                 String?
+  email                String?   @unique
+  emailVerified        DateTime?
+  image                String?
+  accounts             Account[]
+  sessions             Session[]
+  terminalToken        String?
+  terminalAccessToken  String?
+  terminalRefreshToken String?
+  terminalExpiresAt    DateTime?
+  onboardingStatus     Int       @default(0) // Onboarding status
+  currentStreak        Int       @default(0) // Current streak count
+  longestStreak        Int       @default(0) // Longest streak achieved
+  lastCommitDate       DateTime? // Last date the user committed
+  lastCoffeeOrder      DateTime? // Track when the last coffee was ordered
 }
 
 model VerificationToken {

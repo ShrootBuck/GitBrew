@@ -61,18 +61,22 @@ export async function GET(request: NextRequest) {
     // Type assertion after receiving the tokens
     const { access_token, refresh_token, expires_in } = tokens as TokenResponse;
 
-    // TODO: Securely store tokens in DB associated with session.user.id
-    // e.g., await db.terminalAccount.create({ data: { userId: session.user.id, accessToken: encrypt(access_token), refreshToken: encrypt(refresh_token), expiresAt: ... } })
-    // Need to add a TerminalAccount model to prisma schema
+    // Store tokens in the User model
+    const expiresAt = new Date(Date.now() + expires_in * 1000);
 
-    // Update onboarding status
+    // Update user with terminal tokens and onboarding status
     await db.user.update({
       where: { id: session.user.id },
-      data: { onboardingStatus: 2 }, // Assuming 2 is the next step
+      data: {
+        terminalAccessToken: access_token,
+        terminalRefreshToken: refresh_token,
+        terminalExpiresAt: expiresAt,
+        onboardingStatus: 2, // Assuming 2 is the next step
+      },
     });
 
     // Redirect to dashboard or next step
-    return NextResponse.redirect(new URL("/dashboard", request.url)); // Or wherever they go next
+    return NextResponse.redirect(new URL("/", request.url));
   } catch (error) {
     console.error("Error during TERMINAL OAuth callback:", error);
     // Redirect back to the onboarding step with an error message
