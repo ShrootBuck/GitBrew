@@ -53,6 +53,7 @@ export default async function LinkCreditCard() {
 
         <div className="link-card-button-container">
           <Link
+            target="_blank"
             href={card.data.url}
             className="flex items-center gap-3 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
           >
@@ -63,7 +64,7 @@ export default async function LinkCreditCard() {
         <form action={updateOnboardingStatus}>
           <button
             type="submit"
-            className="mt-6 rounded-full bg-green-600 px-8 py-3 text-lg font-semibold transition-all hover:bg-green-700"
+            className="mt-6 cursor-pointer rounded-full bg-green-600 px-8 py-3 text-lg font-semibold transition-all hover:bg-green-700"
           >
             Done
           </button>
