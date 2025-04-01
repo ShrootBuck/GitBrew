@@ -89,7 +89,7 @@ export default function UserDropdown({
         <button
           type="button"
           onClick={toggleDropdown}
-          className="flex items-center rounded-full bg-gray-800/50 p-1 text-sm transition-colors hover:bg-gray-700/70 focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-none"
+          className="flex items-center rounded-full bg-gray-800/50 p-1 text-sm transition-all duration-200 ease-in-out select-none hover:bg-gray-700/70 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-none"
           id="user-menu-button"
           aria-expanded={isOpen}
           aria-haspopup="true"
@@ -98,14 +98,15 @@ export default function UserDropdown({
           {userImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              className="h-8 w-8 rounded-full"
+              className="h-8 w-8 rounded-full border-2 border-gray-700 shadow-md select-none"
               src={userImage}
               alt={userName ? `${userName}'s avatar` : "User avatar"}
               width={32}
               height={32}
+              draggable="false"
             />
           ) : (
-            <FaUserCircle className="h-8 w-8 rounded-full text-gray-400" />
+            <FaUserCircle className="h-8 w-8 rounded-full text-gray-400 transition-colors select-none hover:text-gray-300" />
           )}
         </button>
       </div>
@@ -113,12 +114,19 @@ export default function UserDropdown({
       {/* Dropdown Panel */}
       {isOpen && (
         <div
-          className="ring-opacity-5 absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-800 shadow-lg ring-1 ring-black focus:outline-none"
+          className="ring-opacity-5 absolute right-0 z-10 mt-2 w-56 origin-top-right overflow-hidden rounded-md border border-gray-700 bg-gray-800 shadow-lg ring-1 ring-black transition-opacity duration-200 ease-in-out focus:outline-none"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="user-menu-button"
           tabIndex={-1} // Generally not focusable itself, items are
         >
+          {userName && (
+            <div className="border-b border-gray-700 bg-gray-900 px-4 py-3">
+              <p className="truncate text-sm font-medium text-white">
+                {userName}
+              </p>
+            </div>
+          )}
           <div className="py-1" role="none">
             {items.map((item, index) => {
               // Look up the actual icon component using the string name
@@ -136,14 +144,14 @@ export default function UserDropdown({
                   <Link
                     key={index}
                     href={item.href}
-                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-200 transition-colors hover:bg-gray-700 hover:text-white"
+                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-200 transition-colors hover:scale-[1.02] hover:bg-gray-700 hover:text-white active:scale-100"
                     role="menuitem"
                     tabIndex={-1} // Items are focusable
                     id={`user-menu-item-${index}`}
                     onClick={() => setIsOpen(false)} // Close on click
                   >
                     <IconComponent // Use the looked-up component
-                      className="h-4 w-4 text-gray-400"
+                      className="h-4 w-4 text-gray-400 transition-colors group-hover:text-white"
                       aria-hidden="true"
                     />
                     <span>{item.label}</span>
@@ -159,13 +167,13 @@ export default function UserDropdown({
                   <button
                     key={index}
                     onClick={handleAction}
-                    className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-200 transition-colors hover:bg-gray-700 hover:text-white"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-200 transition-all hover:scale-[1.02] hover:bg-gray-700 hover:text-white active:scale-100 active:bg-gray-600"
                     role="menuitem"
                     tabIndex={-1}
                     id={`user-menu-item-${index}`}
                   >
                     <IconComponent // Use the looked-up component
-                      className="h-4 w-4 text-gray-400"
+                      className="h-4 w-4 text-gray-400 transition-colors group-hover:text-white"
                       aria-hidden="true"
                     />
                     <span>{item.label}</span>
