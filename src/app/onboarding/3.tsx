@@ -14,14 +14,16 @@ export default async function LinkCreditCard() {
     return;
   }
 
-  const updateOnboardingStatus = async () => {
+  async function updateOnboardingStatus() {
+    "use server";
+
     if (!session?.user?.id) return;
 
     await db.user.update({
       where: { id: session.user.id },
       data: { onboardingStatus: 3 },
     });
-  };
+  }
 
   if (!session?.user?.id) return;
 
