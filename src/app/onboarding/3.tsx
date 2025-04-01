@@ -31,13 +31,14 @@ export default async function LinkCreditCard() {
         data: { onboardingStatus: 3 },
       });
       console.log(`User ${userId} clicked 'Done' on step 3. Trusting them.`);
-      redirect("/loading");
     } catch (error) {
       console.error(
         `Failed to update onboarding status for user ${userId} after they clicked 'Done'`,
         error,
       );
     }
+
+    redirect("/loading");
   }
 
   // Fetch the Terminal URL server-side before rendering
