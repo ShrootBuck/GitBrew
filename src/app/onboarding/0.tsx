@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { FaGithub, FaFire, FaCoffee, FaTrophy } from "react-icons/fa";
 import Image from "next/image";
+import GHSigninButton from "./gh-signin";
 
 export default function Landing() {
   return (
@@ -36,12 +36,7 @@ export default function Landing() {
           ))}
         </div>
 
-        <Link
-          href="/api/auth/signin"
-          className="flex items-center gap-3 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
-        >
-          <FaGithub className="text-2xl" /> Get Started
-        </Link>
+        <GHSigninButton />
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3 md:gap-8">
           <div className="flex flex-col gap-4 rounded-xl bg-white/10 p-6 text-white transition-all hover:bg-white/20">
