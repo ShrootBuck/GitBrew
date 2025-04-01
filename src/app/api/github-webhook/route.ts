@@ -151,7 +151,7 @@ async function updateUserStreak(userId: string, commitDate: Date) {
   if (shouldUpdateStreak) {
     const coffeeTarget = 14; // Or env var
     const canQualifyForCoffee =
-      currentStreak >= coffeeTarget && !user.lastCoffeeOrder;
+      currentStreak >= coffeeTarget && !user.coffeePending;
 
     const updateData: {
       currentStreak: number;
@@ -175,7 +175,7 @@ async function updateUserStreak(userId: string, commitDate: Date) {
     });
 
     console.log(
-      `Updated streak for user ${userId}: Current=${currentStreak}, Longest=${longestStreak}${canQualifyForCoffee ? ", Flagged for Coffee" : ""}`,
+      `Updated streak for user ${userId}: Current=${currentStreak}${canQualifyForCoffee ? ", Flagged for Coffee" : ""}`,
     );
 
     // No direct coffee order call here anymore!
