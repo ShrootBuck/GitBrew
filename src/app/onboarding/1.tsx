@@ -1,4 +1,5 @@
 import { FaGithub } from "react-icons/fa";
+import Link from "next/link";
 
 export default function GithubApp() {
   return (
@@ -19,12 +20,12 @@ export default function GithubApp() {
         </div>
 
         <div className="github-app-button-container">
-          <a
+          <Link
             href="https://github.com/apps/gitbrew-code-watcher/installations/new"
             className="flex items-center gap-3 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
           >
             <FaGithub className="text-2xl" /> Add GitHub App
-          </a>
+          </Link>
         </div>
 
         <p className="mt-4 text-center text-lg text-white/70">

@@ -1,4 +1,5 @@
 import { FaCoffee } from "react-icons/fa";
+import Link from "next/link";
 
 export default function TerminalConnect() {
   return (
@@ -16,12 +17,12 @@ export default function TerminalConnect() {
         </div>
 
         <div className="terminal-connect-button-container">
-          <a
-            href="/oauth/terminal"
+          <Link
+            href="/api/oauth"
             className="flex items-center gap-3 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
           >
             <FaCoffee className="text-2xl" /> Connect to Terminal
-          </a>
+          </Link>
         </div>
 
         <p className="mt-4 text-center text-lg text-white/70">
