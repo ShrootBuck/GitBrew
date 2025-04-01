@@ -6,6 +6,7 @@ import TerminalConnect from "./onboarding/2";
 
 import LinkCreditCard from "./onboarding/3";
 import AddressForm from "./onboarding/4";
+import { redirect } from "next/navigation";
 
 export default async function HomePage() {
   const session = await auth();
@@ -23,6 +24,8 @@ export default async function HomePage() {
         return <LinkCreditCard />;
       case 3:
         return <AddressForm />;
+      case 4:
+        return redirect("/dashboard");
     }
   }
 
