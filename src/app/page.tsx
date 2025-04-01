@@ -25,7 +25,7 @@ export default async function HomePage() {
       case 3:
         return <AddressForm />;
       case 4:
-        return redirect("/dashboard");
+        return redirect("/home");
     }
   }
 
