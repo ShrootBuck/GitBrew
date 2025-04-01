@@ -59,9 +59,11 @@ export default async function DeleteAccountPage() {
         </h2>
 
         <p className="text-center text-lg text-red-200/80">
-          Seriously? You sure about this? Deleting your account is{" "}
+          Please confirm your decision to delete your account. This action is{" "}
           <strong className="font-bold">permanent</strong>. All your data,
-          streak progress, and pending rewards (if any) will be gone forever.
+          streak progress, and pending rewards will be permanently removed. Your
+          billing information will also be deleted, and you will not be charged
+          for any future caffeinations.
         </p>
 
         <form
@@ -72,18 +74,20 @@ export default async function DeleteAccountPage() {
             type="submit"
             className="w-full rounded-full bg-red-600 px-8 py-4 text-xl font-bold text-white transition-all hover:cursor-pointer hover:bg-red-700 focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-gray-900 focus:outline-none"
           >
-            <FaTrashAlt className="mr-2 inline-block" /> Yes, Delete My Account
+            <FaTrashAlt className="mr-2 inline-block" /> Confirm Account
+            Deletion
           </button>
           <Link
             href="/home"
             className="w-full rounded-full border border-white/30 bg-transparent px-8 py-3 text-center text-lg font-semibold text-white/80 transition-all hover:border-white/60 hover:bg-white/10"
           >
-            Nah, Just Kidding (Cancel)
+            Cancel and Return to Home
           </Link>
         </form>
 
         <p className="mt-4 text-center text-sm text-red-200/60">
-          This action cannot be undone. Make sure you really wanna do this.
+          This action cannot be undone. Please ensure you have backed up any
+          important information.
         </p>
       </div>
     </main>
