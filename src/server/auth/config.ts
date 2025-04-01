@@ -51,7 +51,6 @@ export const authConfig = {
         ...session.user,
         id: user.id,
       },
-      state: "THEPRIMEAGEN",
     }),
   },
 } satisfies NextAuthConfig;

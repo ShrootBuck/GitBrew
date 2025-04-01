@@ -98,7 +98,6 @@ async function updateUserStreak(userId: string, commitDate: Date) {
 
   // Initialize new streak values
   let currentStreak = user.currentStreak;
-  let longestStreak = user.longestStreak;
   let shouldUpdateStreak = false;
 
   const today = new Date();
@@ -148,25 +147,38 @@ async function updateUserStreak(userId: string, commitDate: Date) {
     return;
   }
 
-  // Update longest streak if needed
-  if (currentStreak > longestStreak) {
-    longestStreak = currentStreak;
-  }
-
   // Update the user record if streak changed
   if (shouldUpdateStreak) {
+    const coffeeTarget = 14; // Or env var
+    const canQualifyForCoffee =
+      currentStreak >= coffeeTarget && !user.lastCoffeeOrder;
+
+    const updateData: {
+      currentStreak: number;
+      lastCommitDate: Date;
+      coffeePending: boolean;
+    } = {
+      currentStreak,
+      lastCommitDate: commitDate,
+      coffeePending: false,
+    };
+
+    if (canQualifyForCoffee) {
+      console.log(`User ${userId} hit the streak! Flagging for coffee reward.`);
+      updateData.coffeePending = true;
+      updateData.currentStreak = 0; // Example: Reset streak immediately
+    }
+
     await db.user.update({
       where: { id: userId },
-      data: {
-        currentStreak,
-        longestStreak,
-        lastCommitDate: commitDate,
-      },
+      data: updateData,
     });
 
     console.log(
-      `Updated streak for user ${userId}: Current streak = ${currentStreak}, Longest streak = ${longestStreak}`,
+      `Updated streak for user ${userId}: Current=${currentStreak}, Longest=${longestStreak}${canQualifyForCoffee ? ", Flagged for Coffee" : ""}`,
     );
+
+    // No direct coffee order call here anymore!
   }
 }
 

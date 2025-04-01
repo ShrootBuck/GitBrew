@@ -16,6 +16,8 @@ export default async function HomePage() {
         return <GithubApp />;
       case 1:
         return <TerminalConnect />;
+      case 2:
+        return <p>Hello! Terminal Authed! </p>;
     }
   }
   return <Landing />;

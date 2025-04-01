@@ -17,6 +17,8 @@ export const env = createEnv({
     TERMINAL_CLIENT_ID: z.string(),
     TERMINAL_SECRET: z.string(),
     TERMINAL_API_URL: z.string().url(),
+    TERMINAL_AUTH_URL: z.string().url(),
+    CRON_SECRET: z.string(),
     DATABASE_URL: z.string().url(),
     DIRECT_URL: z.string().url(),
     NODE_ENV: z
@@ -45,6 +47,8 @@ export const env = createEnv({
     TERMINAL_CLIENT_ID: process.env.TERMINAL_CLIENT_ID,
     TERMINAL_SECRET: process.env.TERMINAL_SECRET,
     TERMINAL_API_URL: process.env.TERMINAL_API_URL,
+    TERMINAL_AUTH_URL: process.env.TERMINAL_AUTH_URL,
+    CRON_SECRET: process.env.CRON_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     DIRECT_URL: process.env.DIRECT_URL,
     NODE_ENV: process.env.NODE_ENV,
