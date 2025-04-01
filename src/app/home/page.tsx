@@ -5,14 +5,7 @@ import { auth, signOut } from "~/server/auth";
 import { db } from "~/server/db";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  FaFire,
-  FaCoffee,
-  FaCog,
-  FaSignOutAlt,
-  FaCreditCard,
-  FaMapMarkerAlt,
-} from "react-icons/fa";
+import { FaFire, FaCoffee } from "react-icons/fa";
 import UserDropdown from "./user-dropdown";
 // You'll need a client component for the dropdown interaction
 
@@ -48,20 +41,24 @@ export default async function Dashboard() {
   // Props for the UserDropdown client component
   const dropdownItems = [
     // You'll need to implement these href destinations or actions
-    { label: "Manage Payment", href: "/settings/payment", icon: FaCreditCard },
+    {
+      label: "Manage Payment",
+      href: "/settings/payment",
+      icon: "FaCreditCard",
+    },
     {
       label: "Manage Address",
       href: "/settings/address",
-      icon: FaMapMarkerAlt,
+      icon: "FaMapMarkerAlt",
     },
-    { label: "Settings", href: "/settings", icon: FaCog },
+    { label: "Settings", href: "/settings", icon: "FaCog" },
     {
       label: "Sign Out",
       action: async () => {
         "use server";
         await signOut({ redirect: true, redirectTo: "/" });
       },
-      icon: FaSignOutAlt,
+      icon: "FaSignOutAlt",
     },
     // Add other links like "Help", etc. if needed
   ];

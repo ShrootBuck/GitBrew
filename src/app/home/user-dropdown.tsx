@@ -1,4 +1,4 @@
-// src/app/_components/UserDropdown.tsx
+// src/app/home/user-dropdown.tsx
 "use client";
 
 import React, {
@@ -10,14 +10,34 @@ import React, {
 } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaUserCircle } from "react-icons/fa"; // Default user icon
+// Import ALL possible icons that might be passed as strings
+import {
+  FaUserCircle,
+  FaCreditCard,
+  FaMapMarkerAlt,
+  FaCog,
+  FaSignOutAlt,
+  // Add any other icons you might use in the dropdown here
+} from "react-icons/fa"; // Default user icon and others
 
-// Keep the same item structure
+// Define the possible icon names as a type (must match strings passed from server)
+type IconName = "FaCreditCard" | "FaMapMarkerAlt" | "FaCog" | "FaSignOutAlt"; // Add others if needed
+
+// Create a map from the string name to the actual component
+const iconMap: Record<IconName, ComponentType<SVGProps<SVGSVGElement>>> = {
+  FaCreditCard,
+  FaMapMarkerAlt,
+  FaCog,
+  FaSignOutAlt,
+  // Add mappings for any other icons here
+};
+
+// Updated item structure to expect a string icon name
 interface DropdownItem {
   label: string;
-  icon: ComponentType<SVGProps<SVGSVGElement>>;
+  icon: string; // Expects one of the string names
   href?: string;
-  action?: () => Promise<void> | void;
+  action?: () => Promise<void> | void; // Action prop remains the same
 }
 
 interface UserDropdownProps {
@@ -103,7 +123,15 @@ export default function UserDropdown({
         >
           <div className="py-1" role="none">
             {items.map((item, index) => {
-              const Icon = item.icon; // Get the icon component
+              // Look up the actual icon component using the string name
+              const IconComponent = iconMap[item.icon];
+
+              // Basic check: if the icon name isn't found in the map, skip rendering this item
+              if (!IconComponent) {
+                console.warn(`Icon component not found for name: ${item.icon}`); // Optional warning
+                return null;
+              }
+
               // Conditional rendering based on href or action
               if (item.href) {
                 return (
@@ -116,7 +144,7 @@ export default function UserDropdown({
                     id={`user-menu-item-${index}`}
                     onClick={() => setIsOpen(false)} // Close on click
                   >
-                    <Icon
+                    <IconComponent // Use the looked-up component
                       className="h-4 w-4 text-gray-400"
                       aria-hidden="true"
                     />
@@ -126,6 +154,7 @@ export default function UserDropdown({
               } else if (item.action) {
                 const handleAction = async () => {
                   setIsOpen(false); // Close immediately
+                  // Server actions passed as props are handled correctly by Next.js
                   await item.action!(); // Then execute action
                 };
                 return (
@@ -137,7 +166,7 @@ export default function UserDropdown({
                     tabIndex={-1}
                     id={`user-menu-item-${index}`}
                   >
-                    <Icon
+                    <IconComponent // Use the looked-up component
                       className="h-4 w-4 text-gray-400"
                       aria-hidden="true"
                     />
