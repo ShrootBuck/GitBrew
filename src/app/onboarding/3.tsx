@@ -25,23 +25,18 @@ export default async function LinkCreditCard() {
   async function updateOnboardingStatus() {
     "use server";
 
-    if (!userId) return; // Redundant check, but safe
-
     try {
       await db.user.update({
         where: { id: userId },
-        data: { onboardingStatus: 3 }, // Just update the status, no questions asked
+        data: { onboardingStatus: 3 },
       });
       console.log(`User ${userId} clicked 'Done' on step 3. Trusting them.`);
-      redirect("/"); // Send 'em to the main page
+      redirect("/loading");
     } catch (error) {
       console.error(
         `Failed to update onboarding status for user ${userId} after they clicked 'Done'`,
         error,
       );
-      // Maybe redirect with a generic error? Or just let them stay here?
-      // For simplicity, let's just log and maybe they retry clicking 'Done'.
-      // redirect('/onboarding/3?error=update_failed'); // Optional: redirect back with error
     }
   }
 
@@ -57,7 +52,6 @@ export default async function LinkCreditCard() {
     cardUrl = card.data.url;
   } catch (error) {
     console.error("Failed to get Terminal card collection URL:", error);
-    // If this fails, the user can't even click the link... might want to show an error message.
   }
 
   return (
