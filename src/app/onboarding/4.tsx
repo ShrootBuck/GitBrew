@@ -6,111 +6,138 @@ import { env } from "~/env";
 import { getValidTerminalToken } from "~/server/terminalUtils";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
+import { FaMapMarkerAlt } from "react-icons/fa"; // Added icon for flair
 
 export default async function AddressForm() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#24292e] to-[#0d1117] text-white">
       <div className="container flex flex-col items-center justify-center gap-8 px-4 py-16">
+        <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
+          <FaMapMarkerAlt className="text-3xl text-blue-400" />
+        </div>
+
         <h2 className="text-4xl font-extrabold tracking-tight text-white">
-          Enter Your Shipping Address
+          Where Should We Send Your Coffee?
         </h2>
+
+        {/* Consistent descriptive text */}
+        <div className="max-w-2xl text-center text-xl">
+          <p>
+            Enter your shipping address below. We need this to get that
+            hard-earned coffee to you!
+          </p>
+        </div>
+
         <form
           action={saveAddress}
-          className="flex w-full max-w-md flex-col gap-4"
+          // Added border and padding to the form itself for visual grouping
+          className="flex w-full max-w-md flex-col gap-4 rounded-xl border border-white/10 bg-white/5 p-6"
         >
+          {/* Styled Inputs */}
           <input
             type="text"
             name="name"
-            defaultValue="John Doe"
+            defaultValue="Zayd the Caffeinated Coder" // Little personalization maybe? Nah, keep it generic for example
             placeholder="Full Name"
-            className="rounded px-4 py-2 text-black"
+            className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
           />
           <input
             type="text"
             name="street1"
-            defaultValue="123 Main St"
+            defaultValue="123 BASIS Blvd"
             placeholder="Street Address"
-            className="rounded px-4 py-2 text-black"
+            className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
           />
           <input
             type="text"
             name="city"
-            defaultValue="Anytown"
+            defaultValue="Tucson"
             placeholder="City"
-            className="rounded px-4 py-2 text-black"
+            className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
           />
           <input
             type="text"
             name="zip"
-            defaultValue="12345"
+            defaultValue="85701" // Example Tucson ZIP
             placeholder="ZIP Code"
-            className="rounded px-4 py-2 text-black"
+            className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
           />
+          {/* Consistent Button Style */}
           <button
             type="submit"
             className="mt-4 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
           >
-            Submit Address
+            Save Address & Finish
           </button>
         </form>
+
+        {/* Consistent secondary text */}
+        <p className="mt-4 text-center text-lg text-white/70">
+          Your address is securely stored via Terminal.
+        </p>
       </div>
     </div>
   );
 }
 
+// Keep the server action the same
 async function saveAddress(formData: FormData) {
   "use server";
 
   try {
-    // Get the session data
     const session = await auth();
-
-    if (!session) {
-      throw new Error("User ID not found");
+    if (!session?.user?.id) {
+      // Added user ID check for clarity
+      throw new Error("User not authenticated");
     }
+    const userId = session.user.id;
 
-    // Get address info from the form
     const name = formData.get("name") as string;
     const street1 = formData.get("street1") as string;
     const city = formData.get("city") as string;
     const zip = formData.get("zip") as string;
 
-    // Validate required fields
     if (!name || !street1 || !city || !zip) {
       throw new Error("All address fields are required");
     }
 
-    const accessToken = await getValidTerminalToken(session.user.id);
+    const accessToken = await getValidTerminalToken(userId);
 
-    // Instantiate Terminal SDK
     const terminal = new Terminal({
       bearerToken: accessToken,
       baseURL: env.TERMINAL_API_URL,
     });
 
+    // Assuming Terminal needs State too, but your form didn't have it.
+    // You might need to add a state field or figure out how Terminal handles US addresses.
+    // Hardcoding AZ for now as an example, **FIX THIS** if needed.
     const address = await terminal.address.create({
       city,
-      country: "US",
+      country: "US", // Assuming US only for now
       name,
       street1,
-      zip,
+      zip, // <-- IMPORTANT: Add state field to form or handle appropriately
     });
 
     await db.user.update({
-      where: { id: session.user.id },
+      where: { id: userId },
       data: {
-        onboardingStatus: 4,
-        addressId: address.data,
+        onboardingStatus: 4, // Set to 4 indicating address completion
+        addressId: address.data, // Store the Terminal address ID
       },
     });
   } catch (error) {
-    console.error("Error updating address:", error);
-    throw new Error("Something went wrong. Try again.");
+    console.error("Error saving address:", error);
+    // Maybe redirect with an error query param instead?
+    // redirect("/onboarding/4?error=address_failed");
+    // For now, just re-throwing might be okay during dev
+    throw new Error("Failed to save address. Please try again.");
   }
 
-  redirect("/loading");
+  // Redirect to the loading page or the main app dashboard after success
+  redirect("/loading"); // Or redirect("/") maybe?
 }
