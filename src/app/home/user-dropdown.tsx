@@ -8,19 +8,16 @@ import React, {
   type ComponentType,
   type SVGProps,
 } from "react";
-import Image from "next/image";
 import Link from "next/link";
-// Import ALL possible icons that might be passed as strings
+
 import {
   FaUserCircle,
   FaCreditCard,
   FaMapMarkerAlt,
   FaCog,
   FaSignOutAlt,
-  // Add any other icons you might use in the dropdown here
-} from "react-icons/fa"; // Default user icon and others
+} from "react-icons/fa";
 
-// Define the possible icon names as a type (must match strings passed from server)
 type IconName = "FaCreditCard" | "FaMapMarkerAlt" | "FaCog" | "FaSignOutAlt"; // Add others if needed
 
 // Create a map from the string name to the actual component
@@ -99,7 +96,8 @@ export default function UserDropdown({
         >
           <span className="sr-only">Open user menu</span>
           {userImage ? (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               className="h-8 w-8 rounded-full"
               src={userImage}
               alt={userName ? `${userName}'s avatar` : "User avatar"}
