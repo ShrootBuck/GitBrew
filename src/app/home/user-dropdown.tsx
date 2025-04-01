@@ -14,17 +14,21 @@ import {
   FaUserCircle,
   FaCreditCard,
   FaMapMarkerAlt,
-  FaCog,
   FaSignOutAlt,
+  FaTrashAlt,
 } from "react-icons/fa";
 
-type IconName = "FaCreditCard" | "FaMapMarkerAlt" | "FaCog" | "FaSignOutAlt"; // Add others if needed
+type IconName =
+  | "FaCreditCard"
+  | "FaMapMarkerAlt"
+  | "FaTrashAlt"
+  | "FaSignOutAlt"; // Add others if needed
 
 // Create a map from the string name to the actual component
 const iconMap: Record<IconName, ComponentType<SVGProps<SVGSVGElement>>> = {
   FaCreditCard,
   FaMapMarkerAlt,
-  FaCog,
+  FaTrashAlt,
   FaSignOutAlt,
   // Add mappings for any other icons here
 };
