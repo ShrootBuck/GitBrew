@@ -17,7 +17,7 @@ export default async function HomePage() {
       case 1:
         return <TerminalConnect />;
       case 2:
-        return <p>Hello! Terminal Authed; now to add a credit card.</p>;
+        return <p>Hello!! Terminal Authed; now to add a credit card.</p>;
     }
   }
   return <Landing />;
