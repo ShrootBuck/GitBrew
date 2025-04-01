@@ -4,12 +4,10 @@ import { cookies } from "next/headers"; // Import cookies
 // import { auth } from "~/server/auth"; // Keep if needed for session user ID
 import { db } from "~/server/db";
 import { env } from "../../../env";
+import { auth } from "~/server/auth";
 
 export async function GET(request: NextRequest) {
-  // const session = await auth(); // Still need session for user ID
-  // NOTE: Re-add session logic if you took it out. You need session.user.id later.
-  // Fake session for example if you removed it - PUT REAL AUTH BACK
-  const session = { user: { id: "some-user-id-from-real-auth" } }; // DUMMY - USE REAL AUTH
+  const session = await auth();
   if (!session?.user) {
     return NextResponse.redirect(new URL("/", request.url));
   }
@@ -80,8 +78,6 @@ export async function GET(request: NextRequest) {
     const { access_token, refresh_token, expires_in } = tokens as TokenResponse;
     const expiresAt = new Date(Date.now() + expires_in * 1000);
 
-    // --- Store tokens in DB (your existing logic) ---
-    // MAKE SURE YOU HAVE THE REAL session.user.id HERE
     await db.user.update({
       where: { id: session.user.id },
       data: {
