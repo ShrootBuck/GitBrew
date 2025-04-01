@@ -5,6 +5,7 @@ import { db } from "~/server/db";
 import TerminalConnect from "./onboarding/2";
 
 import LinkCreditCard from "./onboarding/3";
+import AddressForm from "./onboarding/4";
 
 export default async function HomePage() {
   const session = await auth();
@@ -20,6 +21,8 @@ export default async function HomePage() {
         return <TerminalConnect />;
       case 2:
         return <LinkCreditCard />;
+      case 3:
+        return <AddressForm />;
     }
   }
 
