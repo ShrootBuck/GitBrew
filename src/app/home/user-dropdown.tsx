@@ -35,7 +35,7 @@ const iconMap: Record<IconName, ComponentType<SVGProps<SVGSVGElement>>> = {
 // Updated item structure to expect a string icon name
 interface DropdownItem {
   label: string;
-  icon: string; // Expects one of the string names
+  icon: IconName; // Expects one of the string names
   href?: string;
   action?: () => Promise<void> | void; // Action prop remains the same
 }
