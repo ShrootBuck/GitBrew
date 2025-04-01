@@ -23,8 +23,11 @@ export default async function AddressForm() {
         {/* Consistent descriptive text */}
         <div className="max-w-2xl text-center text-xl">
           <p>
-            Enter your shipping address below. We need this to get that
-            hard-earned coffee to you!
+            Enter your shipping address below to tell Terminal where to send
+            your coffee.
+          </p>
+          <p className="mt-2 text-white/70">
+            Note: Currently only US addresses are supported.
           </p>
         </div>
 
@@ -37,7 +40,6 @@ export default async function AddressForm() {
           <input
             type="text"
             name="name"
-            defaultValue="Zayd the Caffeinated Coder" // Little personalization maybe? Nah, keep it generic for example
             placeholder="Full Name"
             className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
@@ -45,7 +47,6 @@ export default async function AddressForm() {
           <input
             type="text"
             name="street1"
-            defaultValue="123 BASIS Blvd"
             placeholder="Street Address"
             className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
@@ -53,7 +54,6 @@ export default async function AddressForm() {
           <input
             type="text"
             name="city"
-            defaultValue="Tucson"
             placeholder="City"
             className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
@@ -61,7 +61,6 @@ export default async function AddressForm() {
           <input
             type="text"
             name="zip"
-            defaultValue="85701" // Example Tucson ZIP
             placeholder="ZIP Code"
             className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
@@ -69,7 +68,7 @@ export default async function AddressForm() {
           {/* Consistent Button Style */}
           <button
             type="submit"
-            className="mt-4 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
+            className="mt-4 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:cursor-pointer hover:bg-[#8a69b8]"
           >
             Save Address & Finish
           </button>
@@ -117,7 +116,7 @@ async function saveAddress(formData: FormData) {
     // Hardcoding AZ for now as an example, **FIX THIS** if needed.
     const address = await terminal.address.create({
       city,
-      country: "US", // Assuming US only for now
+      country: "US", // Only US addresses are supported
       name,
       street1,
       zip, // <-- IMPORTANT: Add state field to form or handle appropriately
