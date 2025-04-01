@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/process-orders",
-      "schedule": "0 * * * *" // Every hour at minute 0
+      "schedule": "0 * * * *"
     }
   ]
 }
