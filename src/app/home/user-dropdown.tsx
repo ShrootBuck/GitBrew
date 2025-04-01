@@ -34,7 +34,6 @@ type DropdownItem = {
   label: string;
   icon: IconName; // Expects one of the string names
   href?: string;
-  action?: () => Promise<void> | void; // Action prop remains the same
 };
 
 type UserDropdownProps = {
@@ -156,28 +155,6 @@ export default function UserDropdown({
                     />
                     <span>{item.label}</span>
                   </Link>
-                );
-              } else if (item.action) {
-                const handleAction = async () => {
-                  setIsOpen(false); // Close immediately
-                  // Server actions passed as props are handled correctly by Next.js
-                  await item.action!(); // Then execute action
-                };
-                return (
-                  <button
-                    key={index}
-                    onClick={handleAction}
-                    className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-200 transition-all hover:scale-[1.02] hover:bg-gray-700 hover:text-white active:scale-100 active:bg-gray-600"
-                    role="menuitem"
-                    tabIndex={-1}
-                    id={`user-menu-item-${index}`}
-                  >
-                    <IconComponent // Use the looked-up component
-                      className="h-4 w-4 text-gray-400 transition-colors group-hover:text-white"
-                      aria-hidden="true"
-                    />
-                    <span>{item.label}</span>
-                  </button>
                 );
               }
               return null; // Should not happen if items are structured correctly

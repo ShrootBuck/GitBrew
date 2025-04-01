@@ -6,7 +6,11 @@ import { FaFire, FaCoffee } from "react-icons/fa";
 import UserDropdown from "./user-dropdown";
 
 // Define the type of dropdown items based on the expected interface
-type IconName = "FaCreditCard" | "FaMapMarkerAlt" | "FaCog" | "FaSignOutAlt";
+type IconName =
+  | "FaCreditCard"
+  | "FaMapMarkerAlt"
+  | "FaTrashAlt"
+  | "FaSignOutAlt";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -49,16 +53,16 @@ export default async function Dashboard() {
       href: "/settings/address",
       icon: "FaMapMarkerAlt" as IconName,
     },
-    { label: "Settings", href: "/settings", icon: "FaCog" as IconName },
+    {
+      label: "Delete Account",
+      href: "/settings/delete",
+      icon: "FaTrashAlt" as IconName,
+    },
     {
       label: "Sign Out",
-      action: async () => {
-        "use server";
-        await signOut({ redirect: true, redirectTo: "/" });
-      },
+      href: "/api/auth/signout",
       icon: "FaSignOutAlt" as IconName,
     },
-    // Add other links like "Help", etc. if needed
   ];
 
   return (
