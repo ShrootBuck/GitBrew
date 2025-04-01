@@ -107,10 +107,10 @@ async function saveAddress(formData: FormData) {
         addressId: address.data,
       },
     });
-
-    redirect("/loading");
   } catch (error) {
     console.error("Error updating address:", error);
     throw new Error("Something went wrong. Try again.");
   }
+
+  redirect("/loading");
 }
