@@ -1,13 +1,12 @@
-// src/app/dashboard.tsx (or maybe just directly in app/page.tsx logic)
-// This is a conceptual component name. Integrate it into your routing.
-
 import { auth, signOut } from "~/server/auth";
 import { db } from "~/server/db";
 import Image from "next/image";
 import Link from "next/link";
 import { FaFire, FaCoffee } from "react-icons/fa";
 import UserDropdown from "./user-dropdown";
-// You'll need a client component for the dropdown interaction
+
+// Define the type of dropdown items based on the expected interface
+type IconName = "FaCreditCard" | "FaMapMarkerAlt" | "FaCog" | "FaSignOutAlt";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -15,13 +14,12 @@ export default async function Dashboard() {
   const user = await db.user.findUnique({
     where: { id: session?.user.id },
     select: {
-      id: true, // Needed for potential actions
+      id: true,
       name: true,
       image: true,
       currentStreak: true,
       lastCommitDate: true,
       coffeePending: true,
-      // Maybe addressId if you want to display part of it?
     },
   });
 
@@ -44,21 +42,21 @@ export default async function Dashboard() {
     {
       label: "Manage Payment",
       href: "/settings/payment",
-      icon: "FaCreditCard",
+      icon: "FaCreditCard" as IconName,
     },
     {
       label: "Manage Address",
       href: "/settings/address",
-      icon: "FaMapMarkerAlt",
+      icon: "FaMapMarkerAlt" as IconName,
     },
-    { label: "Settings", href: "/settings", icon: "FaCog" },
+    { label: "Settings", href: "/settings", icon: "FaCog" as IconName },
     {
       label: "Sign Out",
       action: async () => {
         "use server";
         await signOut({ redirect: true, redirectTo: "/" });
       },
-      icon: "FaSignOutAlt",
+      icon: "FaSignOutAlt" as IconName,
     },
     // Add other links like "Help", etc. if needed
   ];

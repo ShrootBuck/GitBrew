@@ -33,18 +33,18 @@ const iconMap: Record<IconName, ComponentType<SVGProps<SVGSVGElement>>> = {
 };
 
 // Updated item structure to expect a string icon name
-interface DropdownItem {
+type DropdownItem = {
   label: string;
   icon: IconName; // Expects one of the string names
   href?: string;
   action?: () => Promise<void> | void; // Action prop remains the same
-}
+};
 
-interface UserDropdownProps {
+type UserDropdownProps = {
   userImage?: string | null;
   userName?: string | null;
   items: DropdownItem[];
-}
+};
 
 export default function UserDropdown({
   userImage,
