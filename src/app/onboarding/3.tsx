@@ -1,10 +1,11 @@
 import { FaCreditCard } from "react-icons/fa";
-import { redirect } from "next/navigation";
+
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { getValidTerminalToken } from "~/server/terminalUtils";
 import Terminal from "@terminaldotshop/sdk";
 import { env } from "~/env";
+import Link from "next/link";
 
 export default async function LinkCreditCard() {
   const session = await auth();
@@ -14,7 +15,6 @@ export default async function LinkCreditCard() {
   }
 
   const updateOnboardingStatus = async () => {
-    "use server";
     if (!session?.user?.id) return;
 
     await db.user.update({
@@ -23,19 +23,16 @@ export default async function LinkCreditCard() {
     });
   };
 
-  const getCardLink = async () => {
-    "use server";
-    if (!session?.user?.id) return;
+  if (!session?.user?.id) return;
 
-    const accessToken = await getValidTerminalToken(session.user.id);
+  const accessToken = await getValidTerminalToken(session.user.id);
 
-    const terminal = new Terminal({
-      bearerToken: accessToken,
-      baseURL: env.TERMINAL_API_URL,
-    });
-    const card = await terminal.card.collect();
-    return redirect(card.data.url);
-  };
+  const terminal = new Terminal({
+    bearerToken: accessToken,
+    baseURL: env.TERMINAL_API_URL,
+  });
+
+  const card = await terminal.card.collect();
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#24292e] to-[#0d1117] text-white">
@@ -53,14 +50,12 @@ export default async function LinkCreditCard() {
         </div>
 
         <div className="link-card-button-container">
-          <form action={getCardLink}>
-            <button
-              type="submit"
-              className="flex items-center gap-3 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
-            >
-              <FaCreditCard className="text-2xl" /> Link Credit Card
-            </button>
-          </form>
+          <Link
+            href={card.data.url}
+            className="flex items-center gap-3 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:bg-[#8a69b8]"
+          >
+            <FaCreditCard className="text-2xl" /> Link Credit Card
+          </Link>
         </div>
 
         <form action={updateOnboardingStatus}>
