@@ -104,7 +104,7 @@ export default async function LinkCreditCard() {
           <button
             type="submit"
             disabled={!cardUrl} // Disable if URL failed
-            className={`mt-6 rounded-full px-8 py-3 text-lg font-semibold transition-all ${!cardUrl ? "cursor-not-allowed bg-gray-600" : "bg-green-600 hover:bg-green-700"}`}
+            className={`mt-6 rounded-full px-8 py-3 text-lg font-semibold transition-all ${!cardUrl ? "cursor-not-allowed bg-gray-600" : "bg-green-600 hover:cursor-pointer hover:bg-green-700"}`}
           >
             Done
           </button>
