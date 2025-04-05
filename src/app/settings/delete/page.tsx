@@ -85,10 +85,10 @@ export default async function DeleteAccountPage() {
           </Link>
         </form>
 
-        <p className="mt-4 text-center text-sm text-red-200/60">
+        {/* <p className="mt-4 text-center text-sm text-red-200/60">
           This action cannot be undone. Please ensure you have backed up any
           important information.
-        </p>
+        </p> */}
       </div>
     </main>
   );
