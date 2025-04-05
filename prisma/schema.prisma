@@ -51,6 +51,7 @@ model User {
   terminalRefreshToken String?
   terminalExpiresAt    DateTime?
   addressId            String?
+  defaultCardId        String?
   onboardingStatus     Int       @default(0) // Onboarding status
   currentStreak        Int       @default(0) // Current streak count
   lastCommitDate       DateTime? // Last date the user committed

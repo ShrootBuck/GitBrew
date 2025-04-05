@@ -15,12 +15,15 @@ export async function processPendingCoffeeOrders() {
       coffeePending: true,
       terminalAccessToken: { not: null }, // Basic check
       terminalRefreshToken: { not: null },
+      addressId: { not: null }, // Need address too
+      defaultCardId: { not: null }, // MUST have a default card set
     },
     select: {
       id: true,
       terminalAccessToken: true,
       terminalRefreshToken: true,
       addressId: true,
+      defaultCardId: true,
     },
   });
 
@@ -67,28 +70,8 @@ export async function processPendingCoffeeOrders() {
         `[CoffeeProcessor] Selected random variant ${coffeeVariantId} for user ${user.id}.`,
       );
 
-      // 4. Get User's Default Address & Card (THE HACKY PART)
-      const addresses = await terminal.address.list();
-      const defaultAddressId = addresses.data?.[0]?.id;
-      if (!defaultAddressId) {
-        throw new Error(
-          `User ${user.id} has no shipping address configured in Terminal.`,
-        );
-      }
-      console.log(
-        `[CoffeeProcessor] Using address ID ${defaultAddressId} for user ${user.id}.`,
-      );
-
-      const cards = await terminal.card.list();
-      const defaultCardId = cards.data?.[0]?.id;
-      if (!defaultCardId) {
-        throw new Error(
-          `User ${user.id} has no payment card configured in Terminal.`,
-        );
-      }
-      console.log(
-        `[CoffeeProcessor] Using card ID ${defaultCardId} for user ${user.id}.`,
-      );
+      const defaultAddressId = user.addressId!;
+      const defaultCardId = user.defaultCardId!; // fuck you typescript
 
       // 5. Define the Order Payload
       const orderPayload = {
