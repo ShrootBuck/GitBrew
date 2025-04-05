@@ -2,7 +2,7 @@
 import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache"; // For updating the page after save
+import { revalidatePath } from "next/cache";
 
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
@@ -10,28 +10,22 @@ import { getValidTerminalToken } from "~/server/terminalUtils";
 import Terminal from "@terminaldotshop/sdk";
 import { env } from "~/env";
 
-// --- Server Action to Save Default Card ---
 async function saveDefaultCard(formData: FormData) {
   "use server";
 
   const session = await auth();
-  if (!session?.user?.id) {
-    throw new Error("Not authenticated"); // Should be caught by page auth anyway
+  if (!session) {
+    throw new Error("Not authenticated");
   }
   const userId = session.user.id;
   const selectedCardId = formData.get("selectedCardId") as string;
 
   if (!selectedCardId) {
     console.error(`User ${userId} submitted without selecting a card.`);
-    // Maybe redirect with an error? For now, just log and do nothing.
-    // You could also add client-side validation.
-    return; // Or throw an error to show feedback
+    return;
   }
 
   try {
-    // Optional: Verify the card ID actually belongs to the user via Terminal API?
-    // Could fetch cards again here, but might be overkill if the form is trusted.
-
     await db.user.update({
       where: { id: userId },
       data: { defaultCardId: selectedCardId },
@@ -43,23 +37,19 @@ async function saveDefaultCard(formData: FormData) {
 
     // Revalidate the path to show the updated selection immediately
     revalidatePath("/settings/payment");
-    // Optionally redirect or just let the page reload with new state
-    // redirect("/settings/payment?success=true"); // Example redirect with flag
   } catch (error) {
     console.error(
       `Failed to save default card ${selectedCardId} for user ${userId}:`,
       error,
     );
-    // Throw error or redirect with failure flag
+
     throw new Error("Failed to save default card.");
   }
 }
-// --- End Server Action ---
 
-// --- Page Component ---
 export default async function SettingsPaymentPage() {
   const session = await auth();
-  if (!session?.user?.id) {
+  if (!session) {
     redirect("/api/auth/signin");
   }
   const userId = session.user.id;
@@ -70,7 +60,6 @@ export default async function SettingsPaymentPage() {
   let fetchError: string | null = null;
 
   try {
-    // Fetch user's current default card from DB
     const user = await db.user.findUnique({
       where: { id: userId },
       select: { defaultCardId: true },
