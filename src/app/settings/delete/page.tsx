@@ -45,7 +45,7 @@ async function deleteUserAccount() {
 export default async function DeleteAccountPage() {
   // ... (rest of the component is unchanged) ...
   const session = await auth();
-  if (!session?.user?.id) {
+  if (!session) {
     redirect("/api/auth/signin");
   }
 
