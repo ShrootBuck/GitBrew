@@ -1,10 +1,8 @@
 // src/app/api/cron/process-orders/route.ts
 import { NextResponse } from "next/server";
-import { processPendingCoffeeOrders } from "~/server/coffeeProcessor"; // Adjust path
+import { processPendingCoffeeOrders } from "~/server/coffeeProcessor";
 import { env } from "~/env";
 
-// Secure this endpoint! Vercel uses Authorization: Bearer <CRON_SECRET>
-// Add CRON_SECRET to your Vercel project environment variables.
 export async function GET(request: Request) {
   const expectedSecret = env.CRON_SECRET; // Ensure CRON_SECRET is in env.js and .env
   const providedToken = request.headers

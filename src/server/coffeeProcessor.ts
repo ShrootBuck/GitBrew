@@ -16,6 +16,12 @@ export async function processPendingCoffeeOrders() {
       terminalAccessToken: { not: null }, // Basic check
       terminalRefreshToken: { not: null },
     },
+    select: {
+      id: true,
+      terminalAccessToken: true,
+      terminalRefreshToken: true,
+      addressId: true,
+    },
   });
 
   console.log(
@@ -60,7 +66,6 @@ export async function processPendingCoffeeOrders() {
       console.log(
         `[CoffeeProcessor] Selected random variant ${coffeeVariantId} for user ${user.id}.`,
       );
-      // --- End random selection ---
 
       // 4. Get User's Default Address & Card (THE HACKY PART)
       const addresses = await terminal.address.list();

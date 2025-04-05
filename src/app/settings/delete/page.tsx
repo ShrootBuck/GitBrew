@@ -81,14 +81,14 @@ export default async function DeleteAccountPage() {
             href="/home"
             className="w-full rounded-full border border-white/30 bg-transparent px-8 py-3 text-center text-lg font-semibold text-white/80 transition-all hover:border-white/60 hover:bg-white/10"
           >
-            Cancel and Return to Home
+            Go Back
           </Link>
         </form>
 
-        {/* <p className="mt-4 text-center text-sm text-red-200/60">
+        <p className="mt-4 text-center text-sm text-red-200/60">
           This action cannot be undone. Please ensure you have backed up any
           important information.
-        </p> */}
+        </p>
       </div>
     </main>
   );
