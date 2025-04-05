@@ -9,7 +9,7 @@ async function deleteUserAccount() {
 
   const session = await auth();
   if (!session) {
-    console.error("Attempted account deletion without authentication.");
+    console.error("Attempted account deletion without being authed.");
     redirect("/");
   }
 
