@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import crypto from "node:crypto"; // Node's built-in crypto is fine here
+import crypto from "node:crypto";
 import { env } from "~/env";
 
 export async function GET() {
@@ -21,7 +21,7 @@ export async function GET() {
     cookies()
   ).set("terminal_oauth_state", state, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Only secure in prod
+    secure: env.NODE_ENV === "production", // Only secure in prod
     path: "/",
     maxAge: 600, // 10 minutes
   });

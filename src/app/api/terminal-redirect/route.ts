@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
   // Exchange code for tokens (your existing logic) - Make sure redirect_uri here matches the one above!
   try {
-    const tokenResponse = await fetch(`https://auth.dev.terminal.shop/token`, {
+    const tokenResponse = await fetch(`${env.TERMINAL_AUTH_URL}/token`, {
       // Use /token endpoint from metadata
       method: "POST",
       headers: {
