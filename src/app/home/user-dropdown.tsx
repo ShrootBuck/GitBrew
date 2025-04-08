@@ -92,7 +92,7 @@ export default function UserDropdown({
         <button
           type="button"
           onClick={toggleDropdown}
-          className="flex items-center rounded-full bg-gray-800/50 p-1 text-sm transition-all duration-200 ease-in-out select-none hover:bg-gray-700/70 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-none"
+          className="focus:ring-opacity-60 flex items-center rounded-full bg-gray-800/50 p-1 text-sm transition-all duration-200 ease-in-out select-none hover:bg-gray-700/70 hover:shadow-md focus:ring-2 focus:ring-[#8a69b8] focus:outline-none"
           id="user-menu-button"
           aria-expanded={isOpen}
           aria-haspopup="true"
