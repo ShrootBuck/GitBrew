@@ -47,7 +47,7 @@ webhooks.on("push", async ({ id, payload }) => {
     pushDate.getDate(),
   );
 
-  // Update user's streak directly without storing the commit
+  // Update user's streak directly w/o storing the commit
   await updateUserStreak(userId, pushDateOnly);
 });
 
@@ -118,7 +118,6 @@ async function updateUserStreak(userId: string, commitDate: Date) {
 
       // If last commit was already today, streak doesn't change
       if (lastCommitDate.getTime() === today.getTime()) {
-        // Streak remains the same, no update needed
         return;
       }
 
@@ -127,6 +126,7 @@ async function updateUserStreak(userId: string, commitDate: Date) {
         currentStreak += 1;
         shouldUpdateStreak = true;
       }
+
       // Otherwise, reset the streak to 1
       else {
         currentStreak = 1;
@@ -137,19 +137,14 @@ async function updateUserStreak(userId: string, commitDate: Date) {
       currentStreak = 1;
       shouldUpdateStreak = true;
     }
-  }
-  // Case 2: This is a commit from a past date that affects the streak calculation
-  else if (commitDate < today) {
-    // Check if this commit fills a gap in the streak
-    // This is more complex and would require analyzing the commit history
-    // For simplicity, we're not handling backdated commits in this implementation
+  } else if (commitDate < today) {
     console.log("Past commit received - not affecting current streak");
     return;
   }
 
   // Update the user record if streak changed
   if (shouldUpdateStreak) {
-    const coffeeTarget = 14; // Or env var
+    const coffeeTarget = 14;
     const canQualifyForCoffee =
       currentStreak >= coffeeTarget && !user.coffeePending;
 
@@ -166,7 +161,7 @@ async function updateUserStreak(userId: string, commitDate: Date) {
     if (canQualifyForCoffee) {
       console.log(`User ${userId} hit the streak! Flagging for coffee reward.`);
       updateData.coffeePending = true;
-      updateData.currentStreak = 0; // Example: Reset streak immediately
+      updateData.currentStreak = 0;
     }
 
     await db.user.update({
@@ -177,19 +172,13 @@ async function updateUserStreak(userId: string, commitDate: Date) {
     console.log(
       `Updated streak for user ${userId}: Current=${currentStreak}${canQualifyForCoffee ? ", Flagged for Coffee" : ""}`,
     );
-
-    // No direct coffee order call here anymore!
   }
 }
 
 export async function POST(req: Request) {
-  // Get the request body as text
   const payload = await req.text();
-
-  // Get the signature from the headers
   const signature = req.headers.get("x-hub-signature-256") ?? "";
 
-  // Get the event name and delivery ID from the headers
   const event = req.headers.get("x-github-event") ?? "";
   const id = req.headers.get("x-github-delivery") ?? "";
 

@@ -1,14 +1,15 @@
-// src/app/api/terminal-redirect/route.ts
 import { NextResponse, type NextRequest } from "next/server";
-import { cookies } from "next/headers"; // Import cookies
+import { cookies } from "next/headers";
 import { db } from "~/server/db";
 import { env } from "../../../env";
 import { auth } from "~/server/auth";
+import { redirect } from "next/navigation";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
-  if (!session?.user) {
-    return NextResponse.redirect(new URL("/", request.url));
+
+  if (!session) {
+    return redirect("/");
   }
 
   const url = new URL(request.url);
@@ -29,23 +30,22 @@ export async function GET(request: NextRequest) {
       { stateFromUrl, stateFromCookie },
       "Redirecting with error.",
     );
-    // Redirect back to onboarding step 2 with error
+
     return NextResponse.redirect(
-      new URL("/onboarding/2?error=state_mismatch", request.url), // Use specific error
+      new URL("/error?msg=state_mismatch", request.url),
     );
   }
 
   if (!code) {
     console.error("No code received from TERMINAL");
     return NextResponse.redirect(
-      new URL("/onboarding/2?error=terminal_auth_failed", request.url),
+      new URL("/error?msg=terminal_auth_failed", request.url),
     );
   }
 
-  // Exchange code for tokens (your existing logic) - Make sure redirect_uri here matches the one above!
+  // Exchange code for tokens
   try {
     const tokenResponse = await fetch(`${env.TERMINAL_AUTH_URL}/token`, {
-      // Use /token endpoint from metadata
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -70,7 +70,6 @@ export async function GET(request: NextRequest) {
       access_token: string;
       refresh_token: string;
       expires_in: number;
-      // Add other fields if needed (id_token, token_type, scope)
     }
     const { access_token, refresh_token, expires_in } = tokens as TokenResponse;
     const expiresAt = new Date(Date.now() + expires_in * 1000);
@@ -84,14 +83,12 @@ export async function GET(request: NextRequest) {
         onboardingStatus: 2, // Update status
       },
     });
-    // --- End DB update ---
 
-    // Redirect to the main app page (or wherever they go after onboarding)
     return NextResponse.redirect(new URL("/", request.url));
   } catch (error) {
     console.error("Error during TERMINAL OAuth callback:", error);
     return NextResponse.redirect(
-      new URL("/onboarding/2?error=token_exchange_failed", request.url),
+      new URL("/error?msg=token_exchange_failed", request.url),
     );
   }
 }

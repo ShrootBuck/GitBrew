@@ -1,4 +1,3 @@
-// src/app/home/user-dropdown.tsx
 "use client";
 
 import React, {
@@ -22,20 +21,18 @@ type IconName =
   | "FaCreditCard"
   | "FaMapMarkerAlt"
   | "FaTrashAlt"
-  | "FaSignOutAlt"; // Add others if needed
+  | "FaSignOutAlt";
 
-// Create a map from the string name to the actual component
 const iconMap: Record<IconName, ComponentType<SVGProps<SVGSVGElement>>> = {
   FaCreditCard,
   FaMapMarkerAlt,
   FaTrashAlt,
   FaSignOutAlt,
-  // Add mappings for any other icons here
 };
 
 type DropdownItem = {
   label: string;
-  icon: IconName; // Expects one of the string names
+  icon: IconName;
   href?: string;
 };
 
@@ -53,7 +50,6 @@ export default function UserDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null); // Ref for the dropdown container
 
-  // Toggle dropdown
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -74,7 +70,6 @@ export default function UserDropdown({
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
-      // Clean up listener
       document.removeEventListener("mousedown", handleClickOutside);
     }
 
@@ -97,6 +92,7 @@ export default function UserDropdown({
         >
           <span className="sr-only">Open user menu</span>
           {userImage ? (
+            // sorry Vercel, not bankrupting me this time
             // eslint-disable-next-line @next/next/no-img-element
             <img
               className="h-8 w-8 rounded-full border-2 border-gray-700 shadow-md select-none"
@@ -112,7 +108,6 @@ export default function UserDropdown({
         </button>
       </div>
 
-      {/* Dropdown Panel */}
       {isOpen && (
         <div
           className="ring-opacity-5 absolute right-0 z-10 mt-2 w-56 origin-top-right overflow-hidden rounded-md border border-gray-700 bg-gray-800 shadow-lg ring-1 ring-black transition-opacity duration-200 ease-in-out focus:outline-none"
@@ -130,36 +125,31 @@ export default function UserDropdown({
           )}
           <div className="py-1" role="none">
             {items.map((item, index) => {
-              // Look up the actual icon component using the string name
               const IconComponent = iconMap[item.icon];
 
               // Basic check: if the icon name isn't found in the map, skip rendering this item
               if (!IconComponent) {
-                console.warn(`Icon component not found for name: ${item.icon}`); // Optional warning
+                console.warn(`Icon component not found for name: ${item.icon}`);
                 return null;
               }
 
-              // Conditional rendering based on href or action
-              if (item.href) {
-                return (
-                  <Link
-                    key={index}
-                    href={item.href}
-                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-200 transition-colors hover:scale-[1.02] hover:bg-gray-700 hover:text-white active:scale-100"
-                    role="menuitem"
-                    tabIndex={-1} // Items are focusable
-                    id={`user-menu-item-${index}`}
-                    onClick={() => setIsOpen(false)} // Close on click
-                  >
-                    <IconComponent // Use the looked-up component
-                      className="h-4 w-4 text-gray-400 transition-colors group-hover:text-white"
-                      aria-hidden="true"
-                    />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              }
-              return null; // Should not happen if items are structured correctly
+              return (
+                <Link
+                  key={index}
+                  href={item.href}
+                  className="flex items-center gap-3 px-4 py-2 text-sm text-gray-200 transition-colors hover:scale-[1.02] hover:bg-gray-700 hover:text-white active:scale-100"
+                  role="menuitem"
+                  tabIndex={-1} // Items are focusable
+                  id={`user-menu-item-${index}`}
+                  onClick={() => setIsOpen(false)} // Close on click
+                >
+                  <IconComponent // Use the looked-up component
+                    className="h-4 w-4 text-gray-400 transition-colors group-hover:text-white"
+                    aria-hidden="true"
+                  />
+                  <span>{item.label}</span>
+                </Link>
+              );
             })}
           </div>
         </div>

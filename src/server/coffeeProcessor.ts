@@ -4,6 +4,7 @@ import { env } from "~/env";
 import { getValidTerminalToken } from "./terminalUtils"; // Adjust path as needed
 
 // Helper to pick a random item from an array
+// Thanks Claude
 function getRandomElement<T>(arr: T[]): T | undefined {
   if (!arr || arr.length === 0) return undefined;
   return arr[Math.floor(Math.random() * arr.length)];
@@ -13,9 +14,9 @@ export async function processPendingCoffeeOrders() {
   const usersToReward = await db.user.findMany({
     where: {
       coffeePending: true,
-      terminalAccessToken: { not: null }, // Basic check
+      terminalAccessToken: { not: null },
       terminalRefreshToken: { not: null },
-      addressId: { not: null }, // Need address too
+      addressId: { not: null },
       defaultCardId: { not: null }, // MUST have a default card set
     },
     select: {
@@ -34,36 +35,33 @@ export async function processPendingCoffeeOrders() {
   for (const user of usersToReward) {
     console.log(`[CoffeeProcessor] Processing user ${user.id}...`);
     try {
-      // 1. Get Valid Token (Handles Refresh)
+      // Get Valid Token (Handles Refresh)
       const accessToken = await getValidTerminalToken(user.id);
 
-      // 2. Instantiate Terminal SDK
       const terminal = new Terminal({
         bearerToken: accessToken,
         baseURL: env.TERMINAL_API_URL,
       });
 
-      // 3. Get Available Products (for random selection)
+      // Get Available Products (for random selection)
       const productsResponse: Terminal.ProductListResponse =
         await terminal.product.list();
       if (!productsResponse.data || productsResponse.data.length === 0) {
         throw new Error(`No products found in Terminal shop.`);
       }
 
-      // --- Find a random 12oz variant ID ---
+      // Get all variants and pick a random one
       const allVariants = productsResponse.data.flatMap(
         (p: Terminal.Product) => p.variants ?? [],
       );
-      // Adjust this filter based on actual variant names/properties if needed
-      const targetVariants: Terminal.ProductVariant[] = allVariants.filter(
-        (v: Terminal.ProductVariant) => v.name?.includes("12oz"),
-      );
-      if (targetVariants.length === 0) {
-        throw new Error(`No '12oz' product variants found to order randomly.`);
+
+      if (allVariants.length === 0) {
+        throw new Error(`No product variants found to order.`);
       }
-      const randomVariant = getRandomElement(targetVariants);
+
+      const randomVariant = getRandomElement(allVariants);
       if (!randomVariant) {
-        throw new Error(`Could not select a random 12oz variant ID.`);
+        throw new Error(`Could not select a random variant ID.`);
       }
       const coffeeVariantId = randomVariant.id;
       console.log(
@@ -73,7 +71,6 @@ export async function processPendingCoffeeOrders() {
       const defaultAddressId = user.addressId!;
       const defaultCardId = user.defaultCardId!; // fuck you typescript
 
-      // 5. Define the Order Payload
       const orderPayload = {
         variants: { [coffeeVariantId]: 1 }, // Order 1 unit of the random variant
         cardID: defaultCardId,
@@ -85,14 +82,14 @@ export async function processPendingCoffeeOrders() {
         orderPayload,
       );
 
-      // 6. Place the order using POST /order
+      //  Place the order using POST /order
       const orderResponse = await terminal.order.create(orderPayload);
 
       console.log(
         `[CoffeeProcessor] Successfully placed order ${orderResponse.data} for user ${user.id}.`,
       );
 
-      // 7. Update User record on success
+      // Update User record on success
       await db.user.update({
         where: { id: user.id },
         data: {
@@ -123,7 +120,7 @@ export async function processPendingCoffeeOrders() {
         await db.user.update({
           where: { id: user.id },
           data: {
-            coffeePending: false, // Stop trying
+            coffeePending: false, // Give up :pensive:
           },
         });
       } else {

@@ -1,4 +1,3 @@
-// /src/app/onboarding/3.tsx
 import { FaCreditCard } from "react-icons/fa";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -8,14 +7,13 @@ import { db } from "~/server/db";
 import { getValidTerminalToken } from "~/server/terminalUtils";
 import Terminal from "@terminaldotshop/sdk";
 import { env } from "~/env";
-import type { Prisma } from "@prisma/client"; // Import Prisma types
+import type { Prisma } from "@prisma/client";
 
-// --- Server Action defined OUTSIDE the component ---
 async function saveCardAndProceed() {
-  "use server"; // Still need this
+  "use server"; // Still need this bs
 
   const session = await auth();
-  if (!session?.user?.id) {
+  if (!session) {
     // Should be protected by page auth check, but good practice
     console.error("saveCardAndProceed called without authenticated user.");
     redirect("/api/auth/signin");
@@ -25,21 +23,21 @@ async function saveCardAndProceed() {
   let defaultCardIdToSet: string | null = null;
 
   try {
-    // 1. Get valid token
+    // Get valid token
     const accessToken = await getValidTerminalToken(userId);
     const terminal = new Terminal({
       bearerToken: accessToken,
       baseURL: env.TERMINAL_API_URL,
     });
 
-    // 2. Fetch the user's cards from Terminal
+    // Fetch the user's cards from Terminal
     const cardsResponse = await terminal.card.list();
     const cards = cardsResponse.data ?? [];
 
-    // 3. Check if any cards exist
+    // Check if any cards exist
     if (cards.length > 0) {
       // Set the *first* card in the list as the default
-      defaultCardIdToSet = cards[0]?.id ?? null; // Use optional chaining just in case
+      defaultCardIdToSet = cards[0]?.id ?? null;
       console.log(
         `User ${userId} has cards. Setting first card ${defaultCardIdToSet} as default.`,
       );
@@ -52,7 +50,7 @@ async function saveCardAndProceed() {
       );
     }
 
-    // 4. Prepare update data - always update status, conditionally update card ID
+    // Prepare update data - always update status, conditionally update card id
     const updateData: Prisma.UserUpdateInput = {
       onboardingStatus: 3, // Advance to next step (address)
     };
@@ -60,7 +58,7 @@ async function saveCardAndProceed() {
       updateData.defaultCardId = defaultCardIdToSet;
     }
 
-    // 5. Update the user in the database
+    // Update the user in the database
     await db.user.update({
       where: { id: userId },
       data: updateData,

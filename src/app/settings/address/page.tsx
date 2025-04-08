@@ -1,18 +1,16 @@
-// src/app/settings/address/page.tsx
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { redirect } from "next/navigation";
-import { auth } from "~/server/auth"; // Import auth here
-import { db } from "~/server/db"; // Import db here
+import { auth } from "~/server/auth";
+import { db } from "~/server/db";
 
-// --- Server Action defined OUTSIDE the component ---
 async function rewindToAddressStep() {
   "use server"; // Magic words still needed
 
-  const session = await auth(); // Get session inside the action
-  if (!session?.user?.id) {
+  const session = await auth();
+  if (!session) {
     // If somehow called without auth (shouldn't happen via UI, but good practice)
     console.error("rewindToAddressStep called without authenticated user.");
-    redirect("/api/auth/signin"); // Or handle as appropriate
+    redirect("/");
   }
   const userId = session.user.id;
 
@@ -28,8 +26,6 @@ async function rewindToAddressStep() {
         where: { id: userId },
         data: {
           onboardingStatus: 3,
-          // Optionally clear addressId here if you want them to truly start fresh
-          // addressId: null,
         },
       });
       console.log(`User ${userId} opted to re-enter address. Status set to 3.`);
@@ -43,21 +39,16 @@ async function rewindToAddressStep() {
       `Failed to update onboarding status for user ${userId} to change address:`,
       error,
     );
-    // Consider redirecting to an error page or showing a message on the settings page
-    // For now, redirecting to root might hide the error, which isn't ideal long-term
+    redirect("/error?msg=failedChangeAddress");
   }
 
-  // Send them back to the main page, the router there will handle the rest
   redirect("/");
 }
-// --- End Server Action ---
 
-// --- Page Component ---
 export default async function SettingsAddressPage() {
-  // Basic check to ensure user is logged in before even rendering the page content
   const session = await auth();
-  if (!session?.user?.id) {
-    redirect("/api/auth/signin");
+  if (!session) {
+    redirect("/");
   }
 
   return (

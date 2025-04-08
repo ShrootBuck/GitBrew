@@ -4,45 +4,38 @@ import crypto from "node:crypto";
 import { env } from "~/env";
 
 export async function GET() {
-  // 1. Generate a random state string for CSRF protection
+  //  Generate a random state string for CSRF protection
   const state = crypto.randomBytes(16).toString("hex");
 
-  // 2. Store the state in a short-lived, httpOnly cookie
-  //    'httpOnly' prevents client-side JS access.
-  //    'secure' ensures it's only sent over HTTPS (MUST use in production).
-  //    'path=/' makes it available across the site (needed for the callback).
-  //    'maxAge' sets expiry in seconds (e.g., 10 minutes).
-  (
-    await // 2. Store the state in a short-lived, httpOnly cookie
-    //    'httpOnly' prevents client-side JS access.
-    //    'secure' ensures it's only sent over HTTPS (MUST use in production).
-    //    'path=/' makes it available across the site (needed for the callback).
-    //    'maxAge' sets expiry in seconds (e.g., 10 minutes).
-    cookies()
-  ).set("terminal_oauth_state", state, {
+  (await cookies()).set("terminal_oauth_state", state, {
     httpOnly: true,
-    secure: env.NODE_ENV === "production", // Only secure in prod
+    secure: env.NODE_ENV === "production",
     path: "/",
-    maxAge: 600, // 10 minutes
+    maxAge: 600,
   });
 
-  // 3. Construct Terminal's Authorization URL
-  const authorizationUrl = new URL(
-    // Endpoint from the metadata you provided
-    `${env.TERMINAL_AUTH_URL}/authorize`,
-  );
+  // Construct Terminal's Authorization URL
+  const authorizationUrl = new URL(`${env.TERMINAL_AUTH_URL}/authorize`);
 
-  authorizationUrl.searchParams.set("response_type", "code"); // Standard OAuth code flow
+  authorizationUrl.searchParams.set("response_type", "code");
   authorizationUrl.searchParams.set("client_id", env.TERMINAL_CLIENT_ID);
   authorizationUrl.searchParams.set(
     "redirect_uri",
-    // IMPORTANT: This MUST exactly match the redirect URI registered with Terminal
-    // AND the one used in your /api/terminal-redirect token exchange.
-    "https://git-brew.vercel.app/api/terminal-redirect", // Changed to likely actual callback URL
+    "https://git-brew.vercel.app/api/terminal-redirect",
   );
   authorizationUrl.searchParams.set("state", state); // Pass the generated state
-  // authorizationUrl.searchParams.set("scope", "requested_scopes"); // Add if Terminal requires specific scopes
+  const scopes = [
+    "primeagen's basement",
+    "theo's garden",
+    "tanner's workshop",
+    "olivia's library",
+    "jack's kitchen",
+  ];
+  const randomScope = scopes[Math.floor(Math.random() * scopes.length)];
+  authorizationUrl.searchParams.set(
+    "scope",
+    randomScope ?? "teej's neovim config",
+  ); // For fun
 
-  // 4. Redirect the user
   return NextResponse.redirect(authorizationUrl.toString());
 }

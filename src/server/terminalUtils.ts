@@ -3,10 +3,9 @@ import { env } from "~/env";
 
 interface RefreshTokenResponse {
   access_token: string;
-  refresh_token?: string; // Might get a new one
+  refresh_token?: string;
   expires_in: number;
   token_type: string;
-  // scope?: string; // etc.
 }
 
 // Refreshes the token if needed and returns a valid access token
@@ -37,7 +36,6 @@ export async function getValidTerminalToken(userId: string): Promise<string> {
     );
     try {
       const response = await fetch(`${env.TERMINAL_AUTH_URL}/token`, {
-        // Add TERMINAL_AUTH_URL to env!
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -74,7 +72,7 @@ export async function getValidTerminalToken(userId: string): Promise<string> {
       });
 
       console.log(`Token refreshed successfully for user ${userId}.`);
-      return tokens.access_token; // Return the new access token
+      return tokens.access_token;
     } catch (error) {
       console.error(`Error refreshing token for user ${userId}:`, error);
       // If refresh fails, we can't proceed. Maybe clear tokens? Or just error out.

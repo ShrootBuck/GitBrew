@@ -12,7 +12,6 @@ export default async function HomePage() {
   const session = await auth();
 
   if (session) {
-    // Get the user
     const user = await db.user.findUnique({ where: { id: session.user.id } });
 
     switch (user?.onboardingStatus) {

@@ -1,4 +1,3 @@
-// src/app/settings/payment/page.tsx
 import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -89,6 +88,7 @@ export default async function SettingsPaymentPage() {
     fetchError =
       "Could not load your payment methods or the update link. Please try again later.";
     // Don't wipe cards or URL if already fetched, might be partial failure
+    // I'm gonna be honest I didn't know this was a thing
     if (!cards) cards = [];
     cardCollectUrl ??= null;
   }
@@ -115,7 +115,6 @@ export default async function SettingsPaymentPage() {
             <p className="text-center text-lg text-white/80">
               Select the card you want to use for coffee shipping costs:
             </p>
-            {/* Form to handle card selection */}
             <form action={saveDefaultCard} className="w-full space-y-3">
               {cards.map((card) => (
                 <label
@@ -127,7 +126,6 @@ export default async function SettingsPaymentPage() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    {/* Basic Icon logic - add more specific icons if needed */}
                     <FaCreditCard className="h-6 w-6 text-gray-300" />
                     <span className="font-medium">
                       {card.brand?.toUpperCase() ?? "Card"} ending in{" "}

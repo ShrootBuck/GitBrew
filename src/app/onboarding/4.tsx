@@ -1,12 +1,10 @@
-// src/app/onboarding/4.tsx
-
 import { redirect } from "next/navigation";
 import { Terminal } from "@terminaldotshop/sdk";
 import { env } from "~/env";
 import { getValidTerminalToken } from "~/server/terminalUtils";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
-import { FaMapMarkerAlt } from "react-icons/fa"; // Added icon for flair
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 export default async function AddressForm() {
   return (
@@ -20,7 +18,6 @@ export default async function AddressForm() {
           Where Should We Send Your Coffee?
         </h2>
 
-        {/* Consistent descriptive text */}
         <div className="max-w-2xl text-center text-xl">
           <p>
             Enter your shipping address below to tell Terminal where to send
@@ -33,10 +30,8 @@ export default async function AddressForm() {
 
         <form
           action={saveAddress}
-          // Added border and padding to the form itself for visual grouping
           className="flex w-full max-w-md flex-col gap-4 rounded-xl border border-white/10 bg-white/5 p-6"
         >
-          {/* Styled Inputs */}
           <input
             type="text"
             name="name"
@@ -65,7 +60,6 @@ export default async function AddressForm() {
             className="rounded border border-white/20 bg-gray-800/60 px-4 py-3 text-white placeholder-white/50 focus:border-[#6e5494] focus:ring-1 focus:ring-[#6e5494] focus:outline-none"
             required
           />
-          {/* Consistent Button Style */}
           <button
             type="submit"
             className="mt-4 rounded-full bg-[#6e5494] px-8 py-4 text-xl font-bold transition-all hover:cursor-pointer hover:bg-[#8a69b8]"
@@ -74,7 +68,6 @@ export default async function AddressForm() {
           </button>
         </form>
 
-        {/* Consistent secondary text */}
         <p className="mt-4 text-center text-lg text-white/70">
           Your address is securely stored via Terminal.
         </p>
@@ -83,14 +76,12 @@ export default async function AddressForm() {
   );
 }
 
-// Keep the server action the same
 async function saveAddress(formData: FormData) {
   "use server";
 
   try {
     const session = await auth();
-    if (!session?.user?.id) {
-      // Added user ID check for clarity
+    if (!session) {
       throw new Error("User not authenticated");
     }
     const userId = session.user.id;
@@ -111,32 +102,25 @@ async function saveAddress(formData: FormData) {
       baseURL: env.TERMINAL_API_URL,
     });
 
-    // Assuming Terminal needs State too, but your form didn't have it.
-    // You might need to add a state field or figure out how Terminal handles US addresses.
-    // Hardcoding AZ for now as an example, **FIX THIS** if needed.
     const address = await terminal.address.create({
       city,
-      country: "US", // Only US addresses are supported
+      country: "US", // Only US addresses are supported by Terminal API (according to docs)
       name,
       street1,
-      zip, // <-- IMPORTANT: Add state field to form or handle appropriately
+      zip,
     });
 
     await db.user.update({
       where: { id: userId },
       data: {
-        onboardingStatus: 4, // Set to 4 indicating address completion
-        addressId: address.data, // Store the Terminal address ID
+        onboardingStatus: 4,
+        addressId: address.data,
       },
     });
   } catch (error) {
     console.error("Error saving address:", error);
-    // Maybe redirect with an error query param instead?
-    // redirect("/onboarding/4?error=address_failed");
-    // For now, just re-throwing might be okay during dev
     throw new Error("Failed to save address. Please try again.");
   }
 
-  // Redirect to the loading page or the main app dashboard after success
-  redirect("/loading"); // Or redirect("/") maybe?
+  redirect("/loading");
 }

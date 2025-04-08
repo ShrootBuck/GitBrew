@@ -26,12 +26,8 @@ async function deleteUserAccount() {
     console.log(
       `[Account Deletion] Deleted user record (and cascaded deletes): ${userId}`,
     );
-
-    // Still might want specific cleanup for external services like Terminal if possible,
-    // but cascade handles the DB relations.
   } catch (error) {
     console.error(`[Account Deletion] Failed for user ${userId}:`, error);
-    // Redirect or throw, depending on how gracefully you want to fail.
     throw new Error(
       "Account deletion failed. Check cascade settings or contact support.",
     );
@@ -43,10 +39,9 @@ async function deleteUserAccount() {
 }
 
 export default async function DeleteAccountPage() {
-  // ... (rest of the component is unchanged) ...
   const session = await auth();
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/");
   }
 
   return (

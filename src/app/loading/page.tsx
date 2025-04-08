@@ -7,6 +7,7 @@ const LoadingSpinner = () => {
   const router = useRouter();
 
   // Redirect after 5 seconds
+  // Hacky, I know
   useEffect(() => {
     const redirectTimeout = setTimeout(() => {
       router.push("/");
