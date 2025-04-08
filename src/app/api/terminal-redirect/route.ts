@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
 
   const cookers = await cookies();
 
-  // --- STATE VERIFICATION ---
   const stateFromCookie = cookers.get("terminal_oauth_state")?.value; // Get state from cookie
 
   // Clear the cookie immediately after reading it, regardless of success/failure
