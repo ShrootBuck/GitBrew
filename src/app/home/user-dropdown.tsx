@@ -87,7 +87,6 @@ export default function UserDropdown({
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
-      {/* Button to toggle the dropdown */}
       <div>
         <button
           type="button"
