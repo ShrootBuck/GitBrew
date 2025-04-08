@@ -1,7 +1,6 @@
 // src/app/api/terminal-redirect/route.ts
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers"; // Import cookies
-// import { auth } from "~/server/auth"; // Keep if needed for session user ID
 import { db } from "~/server/db";
 import { env } from "../../../env";
 import { auth } from "~/server/auth";
