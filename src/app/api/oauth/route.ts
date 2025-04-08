@@ -29,7 +29,7 @@ export async function GET() {
   // 3. Construct Terminal's Authorization URL
   const authorizationUrl = new URL(
     // Endpoint from the metadata you provided
-    "https://auth.dev.terminal.shop/authorize",
+    `${env.TERMINAL_AUTH_URL}/authorize`,
   );
 
   authorizationUrl.searchParams.set("response_type", "code"); // Standard OAuth code flow
