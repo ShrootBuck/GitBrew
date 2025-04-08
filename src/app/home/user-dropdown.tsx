@@ -33,7 +33,6 @@ const iconMap: Record<IconName, ComponentType<SVGProps<SVGSVGElement>>> = {
   // Add mappings for any other icons here
 };
 
-// Updated item structure to expect a string icon name
 type DropdownItem = {
   label: string;
   icon: IconName; // Expects one of the string names
