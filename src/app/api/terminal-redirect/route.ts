@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const stateFromUrl = url.searchParams.get("state"); // State from Terminal callback
+  const stateFromUrl = url.searchParams.get("state");
 
   const cookers = await cookies();
 
@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
       new URL("/onboarding/2?error=state_mismatch", request.url), // Use specific error
     );
   }
-  // --- END STATE VERIFICATION ---
 
   if (!code) {
     console.error("No code received from TERMINAL");
