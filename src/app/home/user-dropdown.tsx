@@ -133,7 +133,17 @@ export default function UserDropdown({
                 return null;
               }
 
-              return (
+              const content = (
+                <>
+                  <IconComponent
+                    className="h-4 w-4 text-gray-400 transition-colors group-hover:text-white"
+                    aria-hidden="true"
+                  />
+                  <span>{item.label}</span>
+                </>
+              );
+
+              return item.href ? (
                 <Link
                   key={index}
                   href={item.href}
@@ -143,12 +153,19 @@ export default function UserDropdown({
                   id={`user-menu-item-${index}`}
                   onClick={() => setIsOpen(false)} // Close on click
                 >
-                  <IconComponent // Use the looked-up component
-                    className="h-4 w-4 text-gray-400 transition-colors group-hover:text-white"
-                    aria-hidden="true"
-                  />
-                  <span>{item.label}</span>
+                  {content}
                 </Link>
+              ) : (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 px-4 py-2 text-sm text-gray-200 transition-colors hover:scale-[1.02] hover:bg-gray-700 hover:text-white active:scale-100"
+                  role="menuitem"
+                  tabIndex={-1}
+                  id={`user-menu-item-${index}`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {content}
+                </div>
               );
             })}
           </div>
